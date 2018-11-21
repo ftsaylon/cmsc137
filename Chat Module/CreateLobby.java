@@ -1,4 +1,6 @@
 import proto.TcpPacketProtos.TcpPacket.*;
+import proto.PlayerProtos.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -43,6 +45,31 @@ class CreateLobby{
             String lobbyId = lobbyPacket2.getLobbyId(); // Get lobby ID
 
             System.out.println(lobbyId);
+
+            // ConnectPacket---------------------------------------------------------------
+            Player player = 
+                Player.newBuilder()
+                    .setId("1")
+                    .setName("Self")
+                    .build();
+
+            ConnectPacket connectPacket = 
+                ConnectPacket.newBuilder()
+                    .setType(PacketType.CONNECT)
+                    .setPlayer(player)
+                    .setLobbyId(lobbyId)
+                    .build();
+            
+            // Send to server
+            out.write(connectPacket.toByteArray());
+
+            byte[] buf2 = new byte[1024]; // Create storage
+            int fromServer2 = in.read(buf2); // Get reply from server
+
+            buf2 = Arrays.copyOf(buf2, fromServer2); // Process data
+            ConnectPacket connectPacket2 = ConnectPacket.parseFrom(buf2); // Parse data
+
+            System.out.println(connectPacket2);
 
             //closing the socket of the client
             server.close();
