@@ -6,38 +6,52 @@ import java.net.*;
 import java.util.*;
 
 class ChatClient{
-    Lobby lobby;
     Player player;
+    InputStream inFromServer;
+    DataInputStream in;
+    OutputStream outToServer;
+    DataOutputStream out;
+    Socket server;
 
-    public ChatClient(Lobby lobby){
-        this.lobby = lobby;
-    }
-
-    void JoinLobby(){
+    void JoinLobby(String lobbyId, String playerName){
         try{
+            String serverName = "202.92.144.45";
+            int port = 80;
+            this.server = new Socket(serverName, port);
+
             this.player = 
                 Player.newBuilder()
                     .setId("1")
-                    .setName("Self")
+                    .setName(playerName)
                     .build();
 
             ConnectPacket connectPacket = 
                 ConnectPacket.newBuilder()
                     .setType(PacketType.CONNECT)
                     .setPlayer(player)
-                    .setLobbyId(this.lobby.lobbyId)
+                    .setLobbyId(lobbyId)
                     .build();
             
             // Send to server
-            this.lobby.out.write(connectPacket.toByteArray());
+            
+            /* Receive data from the ServerSocket */
+            this.inFromServer = server.getInputStream();
+            this.in = new DataInputStream(inFromServer);
+
+            /* Send data to the ServerSocket */
+            this.outToServer = server.getOutputStream();
+            this.out = new DataOutputStream(outToServer);
+            
+            this.out.write(connectPacket.toByteArray());
 
             byte[] buf = new byte[1024]; // Create storage
-            int fromServer = lobby.in.read(buf); // Get reply from server
+            int fromServer = this.in.read(buf); // Get reply from server
 
             buf = Arrays.copyOf(buf, fromServer); // Process data
             ConnectPacket connectPacket2 = ConnectPacket.parseFrom(buf); // Parse data
 
-            System.out.println(connectPacket2);
+            System.out.println("Successfully entered lobby " + lobbyId);
+            // System.out.println(connectPacket2);
 
             //closing the socket of the client
             // lobby.server.close();
@@ -60,10 +74,10 @@ class ChatClient{
                     .build();
             
             // Send to server
-            this.lobby.out.write(chatPacket.toByteArray());
+            this.out.write(chatPacket.toByteArray());
 
             byte[] buf = new byte[1024]; // Create storage
-            int fromServer = this.lobby.in.read(buf); // Get reply from server
+            int fromServer = this.in.read(buf); // Get reply from server
 
             buf = Arrays.copyOf(buf, fromServer); // Process data
             ChatPacket chatPacket2 = ChatPacket.parseFrom(buf); // Parse data

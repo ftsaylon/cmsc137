@@ -50,6 +50,7 @@ class Lobby{
 
             this.lobbyId = lobbyPacket2.getLobbyId(); // Get lobby ID
 
+            System.out.print("Lobby ID: ");
             System.out.println(this.lobbyId);
             
             //closing the socket of the client

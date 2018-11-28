@@ -6,7 +6,9 @@ import java.util.*;
 class Main{
     public static void main(String[] args) {
         Lobby lobby = new Lobby();
-        ChatClient chat_client = new ChatClient(lobby);
+        lobby.CreateLobby();
+        
+        ChatClient chat_client = new ChatClient();
         
         Scanner sc = new Scanner(System.in);
         int choice = 0;
@@ -23,12 +25,20 @@ class Main{
 
             switch(choice){
                 case 1:
-                    chat_client.JoinLobby();               
+                    String inputLobbyId;
+                    System.out.print("Enter Lobby ID: ");
+                    inputLobbyId = sc.next();
+
+                    String playerName;
+                    System.out.print("Enter Player Name: ");
+                    playerName = sc.next();
+
+                    chat_client.JoinLobby(inputLobbyId, playerName);               
                     break;
                 case 2: 
                     String message;
-                    System.out.print(">>> ");
-                    message = sc.nextLine();
+                    System.out.print("Enter Message: ");
+                    message = sc.next();
                     chat_client.Chat(message);
                     break;
                 case 3: 
