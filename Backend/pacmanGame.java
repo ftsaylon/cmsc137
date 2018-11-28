@@ -120,7 +120,7 @@ public class pacmanGame extends JPanel implements KeyListener{
 		State initialState = new State(board, pacman);
 		pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		pacmanFrame.setPreferredSize(new Dimension(840, 910));
+		pacmanFrame.setPreferredSize(new Dimension(840, 840));
 		pacmanFrame.setResizable(false);
 		pacmanFrame.add(new pacmanGame(initialState));
 		pacmanFrame.pack();

@@ -24,6 +24,8 @@ public class PacmanClient implements Runnable, KeyListener{
 
 	private String server_ip;
 	private String player_name;
+	private int is_pacman = true;
+	private int is_ghost = false;
 
 	public PacmanClient(String server_ip, String player_name){
 		this.pacman = state.getPacman();
@@ -136,6 +138,12 @@ public class PacmanClient implements Runnable, KeyListener{
 	public static void main(String[] args){
 		String serverName = "202.92.144.45";
         int port = 80;   
+		JFrame pacmanFrame = new JFrame("pacman Game");
+		Map map = new Map(3);
+		Board board = new Board(map);
+		Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos());
+		State initialState = new State(board, pacman);
+		
 		try{
 			PacmanClient game = new PacmanClient(serverName, "FPJ");	
 		}catch(IOException e){
@@ -144,5 +152,13 @@ public class PacmanClient implements Runnable, KeyListener{
         }catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java GreetingClient <server ip> <port no.> '<your message to the server>'");
         }
+        pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		pacmanFrame.setPreferredSize(new Dimension(840, 910));
+		pacmanFrame.setResizable(false);
+		pacmanFrame.add(new pacmanGame(initialState));
+		pacmanFrame.pack();
+		pacmanFrame.setVisible(true);
+	
 	}
 }
