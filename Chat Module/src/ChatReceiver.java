@@ -5,18 +5,20 @@ import packet.TcpPacketProtos.TcpPacket.*;
 import packet.TcpPacketProtos.TcpPacket;
 
 import java.io.IOException;
+import javax.swing.JTextArea;
 
-class ChatReceiver implements Runnable {
+public class ChatReceiver implements Runnable {
     private Packet packet;
     private User user;
     private String lobbyId;
     private Boolean connected;
-
-    public ChatReceiver(Packet packet, User user, String lobbyId) {
+    private JTextArea chatArea;
+    public ChatReceiver(Packet packet, User user, String lobbyId, JTextArea chatArea) {
         this.packet = packet;
         this.user = user;
         this.lobbyId = lobbyId;
         this.connected = true;
+        this.chatArea = chatArea;
     }
 
     void receive(){
@@ -40,6 +42,7 @@ class ChatReceiver implements Runnable {
                     }
                     else if(chat.hasPlayer())
                         System.out.println(chat.getPlayer().getName() + ": " + chat.getMessage());
+                        chatArea.append(chat.getPlayer().getName() + ": " + chat.getMessage());
                     break;
                 case DISCONNECT:
                     DisconnectPacket disconnect = DisconnectPacket.parseFrom(bytes);
