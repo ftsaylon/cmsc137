@@ -9,11 +9,47 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-public class Client {
-    int choice;
-    String lobbyId;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
+
+public class Client extends JFrame{
+    private int choice;
+    private String lobbyId;
+    private JTextArea chatArea; 
+    private JTextField chatBox;
+    private JButton sendButton;
+    private JLabel senderName;
+    private JPanel chatPanel;
+    private ChatReceiver chatReceiver;
+    private ChatSender chatSender;
     public Client(String serverName, int port) {
+        this.chatPanel = new JPanel();
+        this.chatPanel.setLayout(new BoxLayout(this.chatPanel, BoxLayout.Y_AXIS));
+        this.chatArea = new JTextArea(200,300);
+        this.chatArea.setEditable(false);
+        this.chatArea.setLineWrap(true);
+        this.sendButton = new JButton("Send");
+        this.chatBox = new JTextField();
+        this.chatBox.setPreferredSize(new Dimension(200, 100));
+        // this.sendButton.addActionListener(new sendButtonListener());
+        this.senderName = new JLabel();
+        this.chatPanel.add(senderName);
+        this.senderName.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.chatPanel.add(chatArea);
+        this.chatArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.chatPanel.add(chatBox);
+        this.chatBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.chatPanel.add(sendButton);
+        this.sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.add(chatPanel);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(200, 700));
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
+        this.setVisible(true);
         try {
             Packet packet = new Packet();
             User user = new User(packet);
@@ -60,12 +96,12 @@ public class Client {
                 user.setPlayer(connect.getPlayer());
                 System.out.println(user.getPlayer().getName() + " has joined to the lobby.");
 
-                ChatSender chatSender = new ChatSender(packet, user, lobbyId);
-                ChatReceiver chatReceiver = new ChatReceiver(packet, user, lobbyId);
-                
+                chatSender = new ChatSender(packet, user, lobbyId, this.sendButton, this.chatBox, this.chatArea);
+                chatReceiver = new ChatReceiver(packet, user, lobbyId, this.chatArea);
                 Thread sender = new Thread(chatSender);
                 Thread receiver = new Thread(chatReceiver);
-
+                this.senderName.setText(user.getPlayer().getName());
+            
                 sender.start();
                 receiver.start();
                 try {
@@ -83,4 +119,16 @@ public class Client {
             err.printStackTrace();
         }
     }
+   
+    // class sendButtonListener implements ActionListener {
+    //     public void actionPerformed(ActionEvent event) {
+    //         if (chatBox.getText().length() < 1) {
+    //             // do nothing 
+    //         } else {
+    //             chatArea.append("<" + senderName.getText() + ">:  " + chatBox.getText() + "\n");
+    //             chatBox.setText("");
+    //         }
+    //     }
+    // }
+
 }

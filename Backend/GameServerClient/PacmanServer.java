@@ -1,3 +1,4 @@
+package pacman.game;
 import proto.TcpPacketProtos.TcpPacket.*;
 import proto.PlayerProtos.*;
 

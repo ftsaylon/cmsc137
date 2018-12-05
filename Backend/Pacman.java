@@ -1,49 +1,48 @@
-// package pacman;
+package pacman.game;
 
-
-public class Pacman{
+public class Pacman implements Constants{
 	private int lives;
 	private int size; 
 	private int xPos;
 	private int yPos;
-	static final int NORMAL = 0;
-	static final int BIG = 1;
-	static final char UP = 'U';
-	static final char DOWN = 'D';
-	static final char LEFT = 'L';
-	static final char RIGHT = 'R';
-	public Pacman(int xPos, int yPos){
+	public static final int NORMAL_PACMAN = 0;
+	public static final int BIG_PACMAN = 1;
+	private pacmanGame game;
+	public Pacman(int xPos, int yPos, pacmanGame pg){
 		this.lives = 3;
-		this.size = NORMAL;
+		this.size = NORMAL_PACMAN;
 		this.xPos = xPos;
 		this.yPos = yPos;
+		this.game = pg;
 	}
-
-	public void moveLeft(State currState){
-		Board currBoard = currState.getBoard();
+	public void pacmanDies(){
+		this.game.pacmanRespawn();
+	}
+	public void moveLeft(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(LEFT))	{
-			currState.update(LEFT);
 			this.xPos--;
+			currBoard.movePacman(LEFT);
 		}
 	}
-	public void moveRight(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveRight(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(RIGHT))	{
-			currState.update(RIGHT);
+			currBoard.movePacman(RIGHT);
 			this.xPos++;
 		}
 	}
-	public void moveUp(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveUp(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(UP))	{
-			currState.update(UP);
+			currBoard.movePacman(UP);
 			this.yPos--;
 		}
 	}
-	public void moveDown(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveDown(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(DOWN))	{
-			currState.update(DOWN);
+			currBoard.movePacman(DOWN);
 			this.yPos++;
 		}
 	}

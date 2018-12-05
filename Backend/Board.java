@@ -1,3 +1,4 @@
+package pacman.game;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -59,6 +60,7 @@ public class Board {
 	private String[][] boardLayout;
 	private int totalNumberOfDots;
 	private ArrayList<Ghost> ghosts;
+	// private Pacman pacman;
 	static final int BOARD_LENGTH = 31;
 	static final int BOARD_WIDTH = 28; 
 	static final char UP = 'U';
@@ -75,6 +77,7 @@ public class Board {
 	public Board(Map map){
 		this.boardLayout = map.getBoardLayout();
 		this.totalNumberOfDots = 0;
+		// this.pacman = pacman;
 		// this.
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)

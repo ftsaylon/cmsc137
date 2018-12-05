@@ -10,17 +10,17 @@ import java.awt.event.*;
 
 public class PacmanClient implements Runnable, KeyListener{
 	private Pacman pacman;
-	private State state;
 	private Board board;
 	private boolean gameOver;
 	static final int GAME_OVER = 1;
 	static final int NOT_OVER = 0;
+	private ImageList IMAGELIST;
 
-	final ImageIcon wall = new ImageIcon(getClass().getResource("/images/bluewall.jpg"));
-	final ImageIcon dot = new ImageIcon(getClass().getResource("/images/coin.png"));
-	final ImageIcon empty = new ImageIcon(getClass().getResource("/images/empty.jpg"));
-	final ImageIcon ghost = new ImageIcon(getClass().getResource("/images/pacman-down.png"));
-	final ImageIcon pacmanimg = new ImageIcon(getClass().getResource("/images/pacman-right.png")); 
+	// final ImageIcon wall = new ImageIcon(getClass().getResource("/images/bluewall.jpg"));
+	// final ImageIcon dot = new ImageIcon(getClass().getResource("/images/coin.png"));
+	// final ImageIcon empty = new ImageIcon(getClass().getResource("/images/empty.jpg"));
+	// final ImageIcon ghost = new ImageIcon(getClass().getResource("/images/pacman-down.png"));
+	// final ImageIcon pacmanimg = new ImageIcon(getClass().getResource("/images/pacman-right.png")); 
 
 	private String server_ip;
 	private String player_name;
@@ -28,8 +28,6 @@ public class PacmanClient implements Runnable, KeyListener{
 	private int is_ghost = false;
 
 	public PacmanClient(String server_ip, String player_name){
-		this.pacman = state.getPacman();
-		this.state = state;
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.setFocusable(true);
@@ -49,6 +47,9 @@ public class PacmanClient implements Runnable, KeyListener{
         super.paint(g);
        
     }
+    public void setPacman(Pacman pm){
+    	this.pacman = pm;
+    }
 	public void printBoard(){
 		Board board2 = state.getBoard();
 		String[][] bl = board2.getBoardLayout();
@@ -65,25 +66,26 @@ public class PacmanClient implements Runnable, KeyListener{
 			for(int j = 0; j < 28; j++){
 				switch(boardLayout[i][j]){
 					case "w":
-						this.add(new JLabel(wall));
+						this.add(new JLabel(IMAGELIST.getImage("wall")));
 						break;
 					case "o":
-						this.add(new JLabel(dot));
+						this.add(new JLabel(IMAGELIST.getImage("smalldot")));
 						break;
 					case "O":
-						this.add(new JLabel(dot));
+						this.add(new JLabel(IMAGELIST.getImage("bigdot")));
 						break;	
 					case "e":
-						this.add(new JLabel(empty));
+						this.add(new JLabel(IMAGELIST.getImage("empty")));
 						break;
 					case "x":
-						this.add(new JLabel(empty));
+						this.add(new JLabel(IMAGELIST.getImage("empty")));
 						break;
 					case "G":
-						this.add(new JLabel(ghost));
+						this.add(new JLabel(IMAGELIST.getImage("ghost")));
 						break;
 					case "P":
-						this.add(new JLabel(pacmanimg));
+						if(move=="")this.add(new JLabel(IMAGELIST.getImage("pacRIGHT")));
+						else this.add(new JLabel(IMAGELIST.getImage("pac"+move)));
 						break;
 					}
 			}
@@ -96,11 +98,21 @@ public class PacmanClient implements Runnable, KeyListener{
 		this.revalidate();
 		this.repaint();
 	}
+	// public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
+	// 	if(state.getGameStatus() == GAME_OVER){
+	// 		this.gameOver = true;
+	// 		this.setFocusable(false);
+	// 	}
+	// }
 	public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
-		if(state.getGameStatus() == GAME_OVER){
-			this.gameOver = true;
-			this.setFocusable(false);
-		}
+		
+		// if(state.getGameStatus() == GAME_OVER){
+		// 	this.gameOver = true;
+		// 	this.setFocusable(false);
+		// }
+	}
+	public Board getGameBoard(){
+		return this.board;
 	}
 	public void keyPressed(KeyEvent ke){ //if UP, DOWN, LEFT, or RIGHT key is pressed whedin the puzzlePanel is focused
 		if(ke.getKeyCode()==KeyEvent.VK_UP){
@@ -142,10 +154,11 @@ public class PacmanClient implements Runnable, KeyListener{
 		Map map = new Map(3);
 		Board board = new Board(map);
 		Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos());
-		State initialState = new State(board, pacman);
+		pacmanGame game = new pacmanGame(board);
+		game.setPacman(pacman);
 		
 		try{
-			PacmanClient game = new PacmanClient(serverName, "FPJ");	
+			PacmanClient newGgame = new PacmanClient(serverName, "FPJ");	
 		}catch(IOException e){
             e.printStackTrace();
             System.out.println("Cannot find (or disconnected from) Server");
