@@ -10,12 +10,12 @@ public class Ghost{
 	private String name;
 	private int xPos, yPos;
 	private String color;
-	private pacmanGame game;
+	private PacmanClient game;
 	static final char UP = 'U';
 	static final char DOWN = 'D';
 	static final char LEFT = 'L';
 	static final char RIGHT = 'R';
-	public Ghost(String name, int xPos, int yPos, String color, pacmanGame pg){
+	public Ghost(String name, int xPos, int yPos, String color, PacmanClient pg){
 		this.name = name;
 		this.xPos = xPos;
 		this.yPos = yPos;
