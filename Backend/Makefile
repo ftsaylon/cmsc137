@@ -8,5 +8,8 @@ build:
 run:
 	java Main
 
+game:
+	java pacmanGame
+
 clean:
 	$(RM) *.class && rm -rf ./packet && $(RM) ./src/*.class
