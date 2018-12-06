@@ -24,6 +24,7 @@ public class Client extends JFrame{
     private JPanel chatPanel;
     private ChatReceiver chatReceiver;
     private ChatSender chatSender;
+
     public Client(String serverName, int port) {
         this.chatPanel = new JPanel();
         this.chatPanel.setLayout(new BoxLayout(this.chatPanel, BoxLayout.Y_AXIS));
@@ -50,6 +51,7 @@ public class Client extends JFrame{
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);
+        
         try {
             Packet packet = new Packet();
             User user = new User(packet);
