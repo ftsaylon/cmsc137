@@ -15,6 +15,5 @@ public class Main {
         chatFrame.setLocationRelativeTo(null);
         chatFrame.setResizable(false);
         chatFrame.setVisible(true);
-        System.out.println("YOW");
     }
 }
