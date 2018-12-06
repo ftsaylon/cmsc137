@@ -54,7 +54,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
-		
+
 		this.setFocusable(true);
 		this.addKeyListener(this);
 		setOpaque(true);
@@ -151,18 +151,21 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	public void keyPressed(KeyEvent ke){ //if UP, DOWN, LEFT, or RIGHT key is pressed whedin the puzzlePanel is focused
 		if(ke.getKeyCode()==KeyEvent.VK_UP){
-			pacman.moveUp();
+			this.pacman.moveUp();
 			move = MOVE_UP;
 		}else if(ke.getKeyCode()==KeyEvent.VK_DOWN){
-			pacman.moveDown();
+			this.pacman.moveDown();
 			move = MOVE_DOWN;
 		}else if(ke.getKeyCode()==KeyEvent.VK_LEFT){
-			pacman.moveLeft();
+			this.pacman.moveLeft();
 			move = MOVE_LEFT;
 		}else if(ke.getKeyCode()==KeyEvent.VK_RIGHT){
-			pacman.moveRight();
+			this.pacman.moveRight();
 			move = MOVE_RIGHT;
-		}this.updatePanel();
+		}
+		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(this.pacman.getNumberOfLives()), Integer.toString(this.pacman.getSize()), Integer.toString(this.pacman.getXPos()), Integer.toString(this.pacman.getYPos()));
+		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
+		this.updatePanel();
 		// this.printBoard();
 		checkGameOver();
 	}
@@ -178,11 +181,21 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	public void run(){
 		try {
+			Player playerPacketOld = null;
 			this.clientSocket = new DatagramSocket();
 			
 			while(true){
 				udp_packet.setSocket(this.clientSocket);
-				udp_packet.send(this.playerPacket.toByteArray());
+				
+				if(playerPacketOld == null){
+					playerPacketOld = playerPacket;
+					udp_packet.send(this.playerPacket.toByteArray());
+				}else if(playerPacket.getCharacter().getXPos() != playerPacketOld.getCharacter().getXPos() || playerPacket.getCharacter().getYPos() != playerPacketOld.getCharacter().getYPos()){
+					udp_packet.send(this.playerPacket.toByteArray());	
+				}
+				
+				playerPacketOld = playerPacket;
+			
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();

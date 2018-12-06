@@ -46,7 +46,7 @@ public class PacmanServer implements Runnable, Constants{
 
 		try{
             serverSocket = new DatagramSocket(PORT);
-			serverSocket.setSoTimeout(10000);
+			// serverSocket.setSoTimeout(10000);
 
 			System.out.println("Now listening on port: " + PORT);
 		}catch (IOException e) {
@@ -66,13 +66,22 @@ public class PacmanServer implements Runnable, Constants{
 
 	public void run(){
 		try{
+			Player playerPacketOld = null;
 			byte[] buf = null;
 			while(true){
 				// Get the data from players
 				this.udp_packet.setSocket(this.serverSocket);
 				buf = this.udp_packet.receive();
 				Player playerPacket = Player.parseFrom(buf);
-				// System.out.println(playerPacket);
+				
+				if(playerPacketOld == null){
+					playerPacketOld = playerPacket;
+					// System.out.println(playerPacket);
+				}else if(playerPacket.getCharacter().getXPos() != playerPacketOld.getCharacter().getXPos() || playerPacket.getCharacter().getYPos() != playerPacketOld.getCharacter().getYPos()){
+					System.out.println(playerPacket);
+				}
+				
+				playerPacketOld = playerPacket;
 			}
 		}catch(Exception ioe){
 			ioe.printStackTrace();
