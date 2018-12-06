@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+option java_package = "packet";
+option java_outer_classname = "CharacterProtos";
+
+message Character{
+  required string name = 1;
+  optional string id = 2;
+  optional string lives = 3;
+  optional string size = 4;
+  optional string xPos = 5;
+  optional string yPos = 6;
+}

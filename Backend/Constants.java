@@ -1,5 +1,18 @@
 package pacman.game;
 public interface Constants {
+	/**
+	 * Game port
+	 */
+	public static final int PORT=50000;
+
+	/**
+	 * Game states.
+	 */
+	public static final int GAME_START=0;
+	public static final int IN_PROGRESS=1;
+	public final int GAME_END=2;
+	public final int WAITING_FOR_PLAYERS=3;
+
 	public static final int GAME_OVER = 1;
 	public static final int NOT_OVER = 0;
 	public static final int NORMAL_PACMAN = 0;

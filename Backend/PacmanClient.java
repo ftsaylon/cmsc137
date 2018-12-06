@@ -1,6 +1,7 @@
-// import proto.TcpPacketProtos.TcpPacket.*;
-// import proto.PlayerProtos.*;
 package pacman.game;
+
+import packet.PlayerProtos.Player;
+import packet.CharacterProtos.Character;
 
 import java.net.*;
 import javax.swing.*;
@@ -8,6 +9,8 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.awt.event.*;
+
+import java.net.*;
 
 public class PacmanClient extends JPanel implements Runnable, KeyListener, Constants{
 	private Pacman pacman;
@@ -18,6 +21,14 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private ImageList IMAGELIST;
 	private boolean is_connected;
 	private String move;
+	Map map;
+	
+	DatagramSocket clientSocket; 
+	UDPPacket udp_packet = new UDPPacket();
+	Player playerPacket;
+	Character characterPacket;
+
+	Thread t = new Thread(this);
 
 	// final ImageIcon wall = new ImageIcon(getClass().getResource("/images/bluewall.jpg"));
 	// final ImageIcon dot = new ImageIcon(getClass().getResource("/images/coin.png"));
@@ -30,15 +41,21 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private boolean is_pacman = true;
 	private boolean is_ghost = false;
 
-	public PacmanClient(String server_ip, String player_name, Board board){
+	public PacmanClient(String server_ip, String player_name){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
-		this.board = board;
+		this.map = new Map(3);
+		this.board = new Board(map);
 		this.IMAGELIST = new ImageList();
-		this.setFocusable(true);
 		this.gameOver = false;
 		this.is_connected = false;
 		this.move = "";
+		
+		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
+		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
+		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
+		
+		this.setFocusable(true);
 		this.addKeyListener(this);
 		setOpaque(true);
 		setBackground(Color.BLACK);
@@ -46,15 +63,20 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		setBoard(board.getBoardLayout());
 		revalidate();
 		repaint();
+
+		t.start();
 	}
+
 	@Override
     public void paint(Graphics g) {
         super.paint(g);
        
-    }
+	}
+	
     public void setPacman(Pacman pm){
     	this.pacman = pm;
-    }
+	}
+	
 	public void printBoard(){
 		String[][] bl = this.board.getBoardLayout();
 		for(int i = 0; i < 31; i++){
@@ -65,6 +87,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 		System.out.println();
 	}
+
 	public void setBoard(String[][] boardLayout){
 		for(int i = 0; i < 31; i++){
 			for(int j = 0; j < 28; j++){
@@ -95,21 +118,25 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			}
 		}
 	}
+
 	public void updatePanel(){ //updates the puzzlePanel whenever the player is moved
 		this.removeAll();
 		this.setBoard(this.board.getBoardLayout());
 		this.revalidate();
 		this.repaint();
 	}
+
 	// public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
 	// 	if(state.getGameStatus() == GAME_OVER){
 	// 		this.gameOver = true;
 	// 		this.setFocusable(false);
 	// 	}
 	// }
+
 	public void pacmanRespawn(){
 		
 	}
+
 	public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
 		
 		// if(state.getGameStatus() == GAME_OVER){
@@ -117,9 +144,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		// 	this.setFocusable(false);
 		// }
 	}
+
 	public Board getGameBoard(){
 		return this.board;
 	}
+
 	public void keyPressed(KeyEvent ke){ //if UP, DOWN, LEFT, or RIGHT key is pressed whedin the puzzlePanel is focused
 		if(ke.getKeyCode()==KeyEvent.VK_UP){
 			pacman.moveUp();
@@ -134,53 +163,51 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacman.moveRight();
 			move = MOVE_RIGHT;
 		}this.updatePanel();
-		this.printBoard();
+		// this.printBoard();
 		checkGameOver();
-
-
-	}public void keyTyped(KeyEvent ke){
+	}
+	
+	public void keyTyped(KeyEvent ke){
 	
 		
-	}public void keyReleased(KeyEvent ke){
+	}
+	
+	public void keyReleased(KeyEvent ke){
 		
 	}
 
 	public void run(){
-		while(true){
-			try { 
-				Thread.sleep(0);
-			}catch(Exception e){
-
+		try {
+			this.clientSocket = new DatagramSocket();
+			
+			while(true){
+				udp_packet.setSocket(this.clientSocket);
+				udp_packet.send(this.playerPacket.toByteArray());
 			}
-
-
-		}
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} 
+		
 	}
 
 	public static void main(String[] args){
-		String serverName = "202.92.144.45";
-        int port = 80;   
+		String serverName = args[0];
+		String playerName = args[1];
 		JFrame pacmanFrame = new JFrame("pacman Game");
-		Map map = new Map(3);
-		Board board = new Board(map);
-		// pacmanGame game = new pacmanGame(board);
-		// Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos(), game);
-		// game.setPacman(pacman);
 		
 		try{
-			PacmanClient client = new PacmanClient(serverName, "FPJ", board);
-			Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos(), client);
-			client.setPacman(pacman);
+			PacmanClient client = new PacmanClient(serverName, playerName);
+			
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 			pacmanFrame.setPreferredSize(new Dimension(775, 700));
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);	
-		// }catch(IOException e){
-  //           e.printStackTrace();
-  //           System.out.println("Cannot find (or disconnected from) Server");
+		// }
+		// catch(IOException e){
+        //     e.printStackTrace();
+        //     System.out.println("Cannot find (or disconnected from) Server");
         }catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java GreetingClient <server ip> <port no.> '<your message to the server>'");
         }

@@ -16,9 +16,12 @@ public class Pacman implements Constants{
 		this.yPos = yPos;
 		this.game = pg;
 	}
+
+
 	public void pacmanDies(){
 		this.game.pacmanRespawn();
 	}
+
 	public void moveLeft(){
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(LEFT))	{
@@ -26,6 +29,7 @@ public class Pacman implements Constants{
 			currBoard.movePacman(LEFT);
 		}
 	}
+
 	public void moveRight(){
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(RIGHT))	{
@@ -33,6 +37,7 @@ public class Pacman implements Constants{
 			this.xPos++;
 		}
 	}
+
 	public void moveUp(){
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(UP))	{
@@ -40,6 +45,7 @@ public class Pacman implements Constants{
 			this.yPos--;
 		}
 	}
+
 	public void moveDown(){
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(DOWN))	{
@@ -47,6 +53,20 @@ public class Pacman implements Constants{
 			this.yPos++;
 		}
 	}
+
+	// Getters
+	public int getSize(){
+		return this.size;
+	}
+
+	public int getXPos(){
+		return this.xPos;
+	}
+
+	public int getYPos(){
+		return this.yPos;
+	}
+
 	public int getNumberOfLives(){
 		return this.lives;
 	}
