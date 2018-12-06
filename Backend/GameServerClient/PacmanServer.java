@@ -1,6 +1,8 @@
 package pacman.game;
-import proto.TcpPacketProtos.TcpPacket.*;
-import proto.PlayerProtos.*;
+
+import packet.PlayerProtos.*;
+import packet.TcpPacketProtos.TcpPacket.*;
+import packet.TcpPacketProtos.TcpPacket;
 
 import java.net.*;
 import javax.swing.*;

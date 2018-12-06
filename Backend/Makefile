@@ -3,13 +3,12 @@ JC = javac
 
 build:
 	$(JC) $(JFLAGS) . *.java
-	$(JC) $(JFLAGS) ./src *.java
 
 run:
 	java Main
 
 game:
-	java pacmanGame
+	java pacman.game.PacmanGame
 
 clean:
-	$(RM) *.class && rm -rf ./packet && $(RM) ./src/*.class
+	$(RM) *.class && rm -rf ./packet && rm -rf ./pacman

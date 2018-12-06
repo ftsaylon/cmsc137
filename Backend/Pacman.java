@@ -7,8 +7,8 @@ public class Pacman implements Constants{
 	private int yPos;
 	public static final int NORMAL_PACMAN = 0;
 	public static final int BIG_PACMAN = 1;
-	private pacmanGame game;
-	public Pacman(int xPos, int yPos, pacmanGame pg){
+	private PacmanGame game;
+	public Pacman(int xPos, int yPos, PacmanGame pg){
 		this.lives = 3;
 		this.size = NORMAL_PACMAN;
 		this.xPos = xPos;

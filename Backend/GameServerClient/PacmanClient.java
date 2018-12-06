@@ -1,3 +1,5 @@
+package pacman.game;
+
 import proto.TcpPacketProtos.TcpPacket.*;
 import proto.PlayerProtos.*;
 
@@ -154,7 +156,7 @@ public class PacmanClient implements Runnable, KeyListener{
 		Map map = new Map(3);
 		Board board = new Board(map);
 		Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos());
-		pacmanGame game = new pacmanGame(board);
+		PacmanGame game = new PacmanGame(board);
 		game.setPacman(pacman);
 		
 		try{
@@ -169,7 +171,7 @@ public class PacmanClient implements Runnable, KeyListener{
 
 		pacmanFrame.setPreferredSize(new Dimension(840, 910));
 		pacmanFrame.setResizable(false);
-		pacmanFrame.add(new pacmanGame(initialState));
+		pacmanFrame.add(new PacmanGame(initialState));
 		pacmanFrame.pack();
 		pacmanFrame.setVisible(true);
 	

@@ -7,7 +7,7 @@ import java.util.*;
 import java.awt.event.*;
 
 
-public class pacmanGame extends JPanel implements KeyListener, Constants{
+public class PacmanGame extends JPanel implements KeyListener, Constants{
 	private Pacman pacman;
 	private Board board;
 	private boolean gameOver;
@@ -19,7 +19,7 @@ public class pacmanGame extends JPanel implements KeyListener, Constants{
 	// final ImageIcon ghost = new ImageIcon(getClass().getResource("/images/pacman-down.png"));
 	// final ImageIcon pacmanimg = new ImageIcon(getClass().getResource("/images/pacman-right.png")); 
 
-	public pacmanGame(Board board){
+	public PacmanGame(Board board){
 		this.setFocusable(true);
 		this.gameOver = false;
 		this.board = board;
@@ -128,7 +128,7 @@ public class pacmanGame extends JPanel implements KeyListener, Constants{
 		JFrame pacmanFrame = new JFrame("pacman Game");
 		Map map = new Map(3);
 		Board board = new Board(map);
-		pacmanGame game = new pacmanGame(board);
+		PacmanGame game = new PacmanGame(board);
 		Pacman pacman = new Pacman(board.getPacmanXPos(), board.getPacmanYPos(), game);
 		game.setPacman(pacman);
 		pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
