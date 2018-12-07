@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+import "proto/character.proto";
+option java_package = "packet";
+option java_outer_classname = "PlayerProtos";
+
+message Player {
+  required string name = 1;
+  optional string id = 2;
+  optional Character character = 3;
+}

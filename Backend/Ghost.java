@@ -1,46 +1,53 @@
+package pacman.game;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 
+
 public class Ghost{
 	private String name;
 	private int xPos, yPos;
+	private String color;
+	private PacmanClient game;
 	static final char UP = 'U';
 	static final char DOWN = 'D';
 	static final char LEFT = 'L';
 	static final char RIGHT = 'R';
-	public Ghost(String name, int xPos, int yPos){
+	public Ghost(String name, int xPos, int yPos, String color, PacmanClient pg){
 		this.name = name;
 		this.xPos = xPos;
 		this.yPos = yPos;
+		this.color = color;
+		this.game = pg;
 	}
 
-	public void moveUp(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveUp(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(this, UP))	{
-			currState.updateGhost(this, UP);
+			currBoard.moveGhost(this, UP);
 			this.yPos--;
 		}
 	}
-	public void moveDown(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveDown(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(this, DOWN))	{
-			currState.updateGhost(this, DOWN);
+			currBoard.moveGhost(this, DOWN);
 			this.yPos++;
 		}
 	}
-	public void moveLeft(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveLeft(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(this, LEFT))	{
-			currState.updateGhost(this, LEFT);
+			currBoard.moveGhost(this, LEFT);
 			this.xPos--;
 		}
 	}
-	public void moveRIGHT(State currState){
-		Board currBoard = currState.getBoard();
+	public void moveRIGHT(){
+		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(this, RIGHT))	{
-			currState.updateGhost(this, RIGHT);
+			currBoard.moveGhost(this, RIGHT);
 			this.xPos++;
 		}
 	}

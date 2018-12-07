@@ -1,81 +1,18 @@
+package pacman.game;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 
-public class Board {
-	//extends JPanel
-	// final ImageIcon wall = new ImageIcon(getClass().getResource("/images/bluewall.jpg"));
-	// final ImageIcon dot = new ImageIcon(getClass().getResource("/images/coin.png"));
-	// final ImageIcon empty = new ImageIcon(getClass().getResource("/images/empty.jpg"));
-	// final ImageIcon ghost = new ImageIcon(getClass().getResource("/images/pacman-down.png"));
-	// final ImageIcon pacman = new ImageIcon(getClass().getResource("/images/pacman-right.png")); 
-	// public Board(Map map){
-	// 	setOpaque(true);
-	// 	setBackground(Color.BLACK);
-	// 	setLayout(new GridLayout(31, 28));
-	// 	setBoard(map.getBoardLayout());
-	// 	revalidate();
-	// 	repaint();
-	// }
-
-	// public void setBoard(String[][] boardLayout){
-	// 	for(int i = 0; i < 31; i++){
-	// 		for(int j = 0; j < 28; j++){
-	// 			switch(boardLayout[i][j]){
-	// 				case "w":
-	// 					this.add(new JLabel(wall));
-	// 					break;
-	// 				case "o":
-	// 					this.add(new JLabel(dot));
-	// 					break;
-	// 				case "e":
-	// 					this.add(new JLabel(empty));
-	// 					break;
-	// 				case "x":
-	// 					this.add(new JLabel(empty));
-	// 					break;
-	// 				case "G":
-	// 					this.add(new JLabel(ghost));
-	// 					break;
-	// 				case "P":
-	// 					this.add(new JLabel(pacman));
-	// 					break;
-	// 				}
-	// 		}
-	// 	}
-	// }
-	// public static void main(String[] args) {
-	// 	JFrame pacman = new JFrame("pacman Game");
-	// 	pacman.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-	// 	pacman.setPreferredSize(new Dimension(840, 910));
-	// 	pacman.setResizable(false);
-	// 	pacman.add(new Board(new Map(3)));
-	// 	pacman.pack();
-	// 	pacman.setVisible(true);
-	// }
+public class Board implements Constants{
 
 	private String[][] boardLayout;
 	private int totalNumberOfDots;
 	private ArrayList<Ghost> ghosts;
-	static final int BOARD_LENGTH = 31;
-	static final int BOARD_WIDTH = 28; 
-	static final char UP = 'U';
-	static final char DOWN = 'D';
-	static final char LEFT = 'L';
-	static final char RIGHT = 'R';
-	static final String PACMAN = "P";
-	static final String DOT = "o";
-	static final String BIGDOT = "O";
-	static final String EMPTY = "e";
-	static final String WALL = "w";
-	static final String OUT = "x";
-	static final String GHOST = "G";
+
 	public Board(Map map){
 		this.boardLayout = map.getBoardLayout();
 		this.totalNumberOfDots = 0;
-		// this.
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				if(this.boardLayout[i][j] == DOT || this.boardLayout[i][j] == BIGDOT)	this.totalNumberOfDots++;
@@ -155,8 +92,6 @@ public class Board {
 				System.out.println(nextPos);
 				if(nextPos.equals(DOT) || nextPos.equals(EMPTY) || nextPos.equals(BIGDOT))	return true;
 			}
-
-			
 		}
 		else if (move==DOWN){
 			if(pacmanY!=BOARD_LENGTH){
@@ -178,30 +113,50 @@ public class Board {
 		}
 		return false;
 	}
+	public String checkNextPos(char move){
+		int xPos = getPacmanXPos();
+		int yPos = getPacmanYPos();
+		String nextPos = "";
+		switch(move){
+			case UP:
+				nextPos = boardLayout[yPos-1][xPos];
+				break;
+			case DOWN:
+				nextPos = boardLayout[yPos+1][xPos];
+				break;
+			case RIGHT:
+				nextPos = boardLayout[yPos][xPos+1];
+				break;
+			case LEFT:
+				nextPos = boardLayout[yPos+1][xPos];
+				break;	
+		}
+		return nextPos;
+	}
 	public boolean checkMoveIfValid(Ghost ghost, char move){
 		int ghostX = ghost.getXPos();
 		int ghostY = ghost.getYPos();
 		if(move==UP){
 			if(ghostY!=0){
-				String nextPos = boardLayout[ghostX][ghostY-1];
+				String nextPos = boardLayout[ghostY-1][ghostX];
 				if(!nextPos.equals(WALL) && !nextPos.equals(OUT))	return true;
 			}
 		}
 		else if (move==DOWN){
 			if(ghostY!=BOARD_LENGTH){
-				String nextPos = boardLayout[ghostX][ghostY+1];
+				String nextPos = boardLayout[ghostY+1][ghostX];
 				if(!nextPos.equals(WALL) && !nextPos.equals(OUT))	return true;
 			}
 		}
 		else if (move==LEFT){
 			if(ghostX!=0){
-				String nextPos = boardLayout[ghostX-1][ghostY];
+				String nextPos = boardLayout[ghostY][ghostX-1];
 				if(!nextPos.equals(WALL) && !nextPos.equals(OUT))	return true;
 			}
 		}
 		else if (move==RIGHT){
 			if(ghostX!=BOARD_WIDTH){
-				String nextPos = boardLayout[ghostX+1][ghostY];
+				String nextPos = boardLayout[ghostY+1][ghostX+1];
 				if(!nextPos.equals(WALL) && !nextPos.equals(OUT))	return true;
 			}
 		}
