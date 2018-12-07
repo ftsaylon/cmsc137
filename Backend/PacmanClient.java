@@ -41,7 +41,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private String server_ip;
 	private String player_name;
 	private boolean is_pacman;
-	private boolean is_ghost;
+	private boolean is_blinky;
+	private boolean is_speedy;
+	private boolean is_inky;
+	private boolean is_clyde;
 
 	public PacmanClient(String server_ip, String player_name){
 		this.server_ip = server_ip;
@@ -56,12 +59,38 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		if(this.numberOfPlayers == 1)	{
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
-			this.is_ghost = false;
+			this.is_blinky = false;
+			this.is_speedy = false;
+			this.is_inky = false;
+			this.is_clyde = false;
 		}
-		// else ghost
-		else{
-			this.is_ghost = true;
+		else if(this.numberOfPlayers == 2){
 			this.is_pacman = false;
+			this.is_blinky = true;
+			this.is_speedy = false;
+			this.is_inky = false;
+			this.is_clyde = false;
+		}
+		else if(this.numberOfPlayers == 3){
+			this.is_pacman = false;
+			this.is_blinky = false;
+			this.is_speedy = true;
+			this.is_inky = false;
+			this.is_clyde = false;
+		}
+		else if(this.numberOfPlayers == 4){
+			this.is_pacman = false;
+			this.is_blinky = false;
+			this.is_speedy = false;
+			this.is_inky = true;
+			this.is_clyde = false;
+		}
+		else if(this.numberOfPlayers == 5){
+			this.is_pacman = false;
+			this.is_blinky = false;
+			this.is_speedy = false;
+			this.is_inky = false;
+			this.is_clyde = true;
 		}
 		this.characterPacket = udp_packet.createCharacter(player_name, Integer.toString(numberOfPlayers), Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
@@ -135,7 +164,16 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					case OUT:
 						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("empty"));
 						break;
-					case GHOST:
+					case BLINKY:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+						break;
+					case SPEEDY:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+						break;
+					case INKY:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+						break;
+					case CLYDE:
 						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
 						break;
 					case PACMAN:
