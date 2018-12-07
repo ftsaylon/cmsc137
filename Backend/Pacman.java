@@ -6,6 +6,8 @@ public class Pacman implements Constants{
 	private int xPos;
 	private int yPos;
 	private int score;
+	private int prevXPos;
+	private int prevYPos;
 	public static final int NORMAL_PACMAN = 0;
 	public static final int BIG_PACMAN = 1;
 	private PacmanClient game;
@@ -28,6 +30,8 @@ public class Pacman implements Constants{
 		this.size = NORMAL_PACMAN;
 	}
 	public void moveLeft(){
+		this.prevXPos = this.xPos;
+		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(LEFT))	{
 			this.xPos--;
@@ -44,6 +48,8 @@ public class Pacman implements Constants{
 	}
 
 	public void moveRight(){
+		this.prevXPos = this.xPos;
+		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(RIGHT))	{
 			currBoard.movePacman(RIGHT);
@@ -60,6 +66,8 @@ public class Pacman implements Constants{
 	}
 
 	public void moveUp(){
+		this.prevXPos = this.xPos;
+		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(UP))	{
 			currBoard.movePacman(UP);
@@ -77,6 +85,8 @@ public class Pacman implements Constants{
 
 	public void moveDown(){
 		Board currBoard = this.game.getGameBoard();
+		this.prevXPos = this.xPos;
+		this.prevYPos = this.yPos;
 		if(currBoard.checkMoveIfValid(DOWN))	{
 			currBoard.movePacman(DOWN);
 			this.yPos++;
@@ -111,15 +121,11 @@ public class Pacman implements Constants{
 	public int getNumberOfLives(){
 		return this.lives;
 	}
-	public int getPrevXPos(String move){
-		if(move == MOVE_UP || move == MOVE_DOWN)	return this.xPos;
-		else if(move == MOVE_RIGHT)	return this.xPos - 1;
-		else return this.xPos + 1;
+	public int getPrevXPos(){
+		return this.prevXPos;
 	}
-	public int getPrevYPos(String move){
-		if(move == MOVE_RIGHT || move == MOVE_LEFT)	return this.yPos;
-		else if(move == MOVE_UP)	return this.yPos + 1;
-		else return this.yPos - 1;
+	public int getPrevYPos(){
+		return this.prevYPos;
 	}
 
 	

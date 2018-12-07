@@ -17,20 +17,21 @@ public class Board implements Constants{
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				if(this.boardLayout[i][j] == DOT || this.boardLayout[i][j] == BIGDOT)	this.totalNumberOfDots++;
 	}
+	
 	public String[][] getBoardLayout(){
 		return this.boardLayout;
 	}
 	public int getPacmanXPos(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
-				if(boardLayout[i][j].equals(PACMAN))	return j;
+				if(boardLayout[i][j].equals(PACMAN) || boardLayout[i][j].equals(BIGPACMAN))	return j;
 		return -1;
 	}
 
 	public int getPacmanYPos(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
-				if(boardLayout[i][j].equals(PACMAN))	return i;
+				if(boardLayout[i][j].equals(PACMAN) || boardLayout[i][j].equals(BIGPACMAN))	return i;
 		return -1;
 	}
 
@@ -133,6 +134,7 @@ public class Board implements Constants{
 		}
 		return nextPos;
 	}
+	
 	public boolean checkMoveIfValid(Ghost ghost, char move){
 		int ghostX = ghost.getXPos();
 		int ghostY = ghost.getYPos();
