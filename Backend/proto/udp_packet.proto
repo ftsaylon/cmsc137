@@ -1,0 +1,39 @@
+syntax = "proto2";
+
+option java_package = "packet";
+option java_outer_classname = "UdpPacketProtos";
+
+message UdpPacket{
+    enum PacketType{
+        CHARACTER = 0;
+        PLAYER = 1;
+        GAMESTATE = 2;
+    }
+
+    required PacketType type = 1;
+
+    message Character{
+        required PacketType type = 1;
+        required string name = 2;
+        optional string id = 3;
+        optional string lives = 4;
+        optional string size = 5;
+        optional string xPos = 6;
+        optional string yPos = 7;
+    }
+
+    message Player {
+        required PacketType type = 1;
+        required string name = 2;
+        optional string id = 3;
+        optional Character character = 4;
+        optional string ip_address = 5;
+        optional string port = 6;
+    }
+
+    message GameState {
+        required PacketType type = 1;
+        repeated Player player_list = 2;
+    }
+}
+
