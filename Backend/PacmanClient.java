@@ -163,16 +163,17 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.pacman.moveRight();
 			move = MOVE_RIGHT;
 		}
+
+		// Update Packets to be sent to server whenever there's movement
 		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(this.pacman.getNumberOfLives()), Integer.toString(this.pacman.getSize()), Integer.toString(this.pacman.getXPos()), Integer.toString(this.pacman.getYPos()));
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
+		
 		this.updatePanel();
-		// this.printBoard();
 		checkGameOver();
 	}
 	
 	public void keyTyped(KeyEvent ke){
 	
-		
 	}
 	
 	public void keyReleased(KeyEvent ke){
@@ -195,7 +196,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 				}
 				
 				playerPacketOld = playerPacket;
-			
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -204,11 +204,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public static void main(String[] args){
-		String serverName = args[0];
-		String playerName = args[1];
 		JFrame pacmanFrame = new JFrame("pacman Game");
 		
 		try{
+			String serverName = args[0];
+			String playerName = args[1];
 			PacmanClient client = new PacmanClient(serverName, playerName);
 			
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -222,7 +222,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
         //     e.printStackTrace();
         //     System.out.println("Cannot find (or disconnected from) Server");
         }catch(ArrayIndexOutOfBoundsException e){
-            System.out.println("Usage: java GreetingClient <server ip> <port no.> '<your message to the server>'");
+            System.out.println("Usage: java PacmanClient <server ip> '<name>'");
         }
         
 	
