@@ -1,7 +1,9 @@
 package pacman.game;
 
-import packet.PlayerProtos.Player;
-import packet.CharacterProtos.Character;
+// import packet.PlayerProtos.Player;
+// import packet.CharacterProtos.Character;
+import packet.UdpPacketProtos.UdpPacket.Player;
+import packet.UdpPacketProtos.UdpPacket.Character;
 
 import java.net.*;
 import javax.swing.*;

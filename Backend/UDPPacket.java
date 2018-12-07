@@ -1,7 +1,11 @@
 package pacman.game;
 
-import packet.PlayerProtos.*;
-import packet.CharacterProtos.Character;
+// import packet.PlayerProtos.*;
+// import packet.CharacterProtos.Character;
+import packet.UdpPacketProtos.UdpPacket.Player;
+import packet.UdpPacketProtos.UdpPacket.Character;
+import packet.UdpPacketProtos.UdpPacket.GameState;
+import packet.UdpPacketProtos.UdpPacket.PacketType;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +15,7 @@ import java.io.IOException;
 
 import java.net.*;
 import java.util.Arrays;
+import java.util.List;
 
 class UDPPacket implements Constants {
     private DatagramSocket socket;
@@ -22,6 +27,7 @@ class UDPPacket implements Constants {
     Character createCharacter(String characterName, String Id, String lives, String size, String xPos, String yPos){
         Character character = 
             Character.newBuilder()
+                .setType(PacketType.CHARACTER)
                 .setName(characterName)
                 .setId(Id)
                 .setLives(lives)
@@ -36,6 +42,7 @@ class UDPPacket implements Constants {
     Player createPlayer(String playerName, Character character){
         Player player = 
             Player.newBuilder()
+                .setType(PacketType.PLAYER)
                 .setName(playerName)
                 .setCharacter(character)
                 .build();
@@ -43,6 +50,23 @@ class UDPPacket implements Constants {
         return player;
     }
 
+    GameState createGameState(Player player){
+        GameState gameState = null;
+            if(player != null){
+                gameState = 
+                    GameState.newBuilder()
+                        .setType(PacketType.GAMESTATE)
+                        .addPlayerList(player)
+                        .build();
+            }else{
+                gameState = 
+                    GameState.newBuilder()
+                        .setType(PacketType.GAMESTATE)
+                        .build();
+            }
+        
+        return gameState;
+    }
 
     void send(byte[] buf) {
         try {

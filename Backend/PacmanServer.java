@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import packet.PlayerProtos.Player;
+// import packet.PlayerProtos.Player;
+import packet.UdpPacketProtos.UdpPacket.*;
 
 public class PacmanServer implements Runnable, Constants{
 	UDPPacket udp_packet;
@@ -40,6 +41,8 @@ public class PacmanServer implements Runnable, Constants{
 	// The main game thread
 	Thread t = new Thread(this);
 	
+	Player player = null;
+
 	public PacmanServer(int numPlayers){
 		this.numPlayers = numPlayers;
 		this.udp_packet = new UDPPacket();
@@ -55,7 +58,7 @@ public class PacmanServer implements Runnable, Constants{
 		}catch(Exception e){}
 		
 		//Create the game state
-		game = new GameState();
+		game = udp_packet.createGameState(player);
 		
 		System.out.println("Game created...");
 		
@@ -73,14 +76,21 @@ public class PacmanServer implements Runnable, Constants{
 				this.udp_packet.setSocket(this.serverSocket);
 				buf = this.udp_packet.receive();
 				Player playerPacket = Player.parseFrom(buf);
-				
+					
+				System.out.println(playerPacket);
 				if(playerPacketOld == null){
 					playerPacketOld = playerPacket;
 					// System.out.println(playerPacket);
+
+					this.game = udp_packet.createGameState(playerPacket);
+
 				}else if(playerPacket.getCharacter().getXPos() != playerPacketOld.getCharacter().getXPos() || playerPacket.getCharacter().getYPos() != playerPacketOld.getCharacter().getYPos()){
-					System.out.println(playerPacket);
+					// System.out.println(playerPacket);
+					System.out.println(this.game.getPlayerListList());
+					this.game = udp_packet.createGameState(playerPacket);
 				}
 				
+
 				playerPacketOld = playerPacket;
 			}
 		}catch(Exception ioe){
