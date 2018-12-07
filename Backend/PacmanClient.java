@@ -101,13 +101,23 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public void updateBoard(){
-		int yPos, xPos;
+		int yPos, xPos, prevYPos, prevXPos;
 		if (this.is_pacman) {
-			yPos = this.board.getPacmanYPos();
-			xPos = this.board.getPacmanXPos();
-			this.boardUI[this.pacman.getPrevYPos(move)][this.pacman.getPrevXPos(move)] = new JLabel(IMAGELIST.getImage("empty"));
+			yPos = this.pacman.getYPos();
+			xPos = this.pacman.getXPos();
+			prevYPos = this.pacman.getPrevYPos();
+			prevXPos = this.pacman.getPrevXPos();
+			
+			if(!(prevYPos == yPos && prevXPos == xPos)){
+				System.out.println("LMAO");
+				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+			}
 			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
 			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pacman"+move));
+		}
+		else {
+			
+			
 		}
 		setBoardUI();
 	}
