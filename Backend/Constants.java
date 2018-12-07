@@ -25,17 +25,22 @@ public interface Constants {
 	public static final String MOVE_DOWN = "DOWN";
 	public static final String MOVE_LEFT = "LEFT";
 	public static final String MOVE_RIGHT = "RIGHT";
+	// board size
+	public static final int BOARD_WIDTH = 28;
+	public static final int BOARD_LENGTH = 31;
 
-	// public static ImageList IMAGELIST = new ImageList();
-	//main frame
 	public static final int FRAME_LENGTH = 950;
 	public static final int FRAME_WIDTH = 800;
 	//text file
-	public static final String PACMAN = "P";
+	public static final String PACMAN = "p";
+	public static final String BIGPACMAN = "P";
 	public static final String DOT = "o";
 	public static final String BIGDOT = "O";
 	public static final String EMPTY = "e";
 	public static final String WALL = "w";
 	public static final String OUT = "x";
-	public static final String GHOST = "G";
+	public static final String GHOST = "g";
+	public static final String GHOST_WITH_DOT = "G";
+	public static final String BLACK_GHOST = "b";
+	public static final String BLACK_GHOST_WITH_DOT = "B";
 }

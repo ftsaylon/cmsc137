@@ -15,14 +15,16 @@ import java.net.*;
 public class PacmanClient extends JPanel implements Runnable, KeyListener, Constants{
 	private Pacman pacman;
 	private Board board;
+	private JLabel[][] boardUI;
 	private boolean gameOver;
-	static final int GAME_OVER = 1;
-	static final int NOT_OVER = 0;
 	private ImageList IMAGELIST;
 	private boolean is_connected;
 	private String move;
-	Map map;
-	
+	private Map map;
+	private HashMap<Ghost, String> ghosts;
+	static final int NOT_OVER = 0;
+
+	private static int numberOfPlayers = 0;
 	DatagramSocket clientSocket; 
 	UDPPacket udp_packet = new UDPPacket();
 	Player playerPacket;
@@ -38,8 +40,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	private String server_ip;
 	private String player_name;
-	private boolean is_pacman = true;
-	private boolean is_ghost = false;
+	private boolean is_pacman;
+	private boolean is_ghost;
 
 	public PacmanClient(String server_ip, String player_name){
 		this.server_ip = server_ip;
@@ -50,11 +52,21 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.gameOver = false;
 		this.is_connected = false;
 		this.move = "";
-		
-		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
-		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
+		this.numberOfPlayers ++;
+		if(this.numberOfPlayers == 1)	{
+			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
+			this.is_pacman = true;
+			this.is_ghost = false;
+		}
+		// else ghost
+		else{
+			this.is_ghost = true;
+			this.is_pacman = false;
+		}
+		this.characterPacket = udp_packet.createCharacter(player_name, Integer.toString(numberOfPlayers), Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
 
+		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
 		this.setFocusable(true);
 		this.addKeyListener(this);
 		setOpaque(true);
@@ -88,40 +100,59 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		System.out.println();
 	}
 
+	public void updateBoard(){
+		int yPos, xPos;
+		if (this.is_pacman) {
+			yPos = this.board.getPacmanYPos();
+			xPos = this.board.getPacmanXPos();
+			this.boardUI[this.pacman.getPrevYPos(move)][this.pacman.getPrevXPos(move)] = new JLabel(IMAGELIST.getImage("empty"));
+			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
+			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pacman"+move));
+		}
+		setBoardUI();
+	}
+	public void setBoardUI(){
+		for(int i = 0; i < BOARD_LENGTH; i++)
+			for(int j = 0; j < BOARD_WIDTH; j++)
+				this.add(this.boardUI[i][j]);
+	}
 	public void setBoard(String[][] boardLayout){
-		for(int i = 0; i < 31; i++){
-			for(int j = 0; j < 28; j++){
+		for(int i = 0; i < BOARD_LENGTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
 				switch(boardLayout[i][j]){
-					case "w":
-						this.add(new JLabel(IMAGELIST.getImage("wall")));
+					case WALL:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("wall"));
 						break;
-					case "o":
-						this.add(new JLabel(IMAGELIST.getImage("smalldot")));
+					case DOT:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("smalldot"));
 						break;
-					case "O":
-						this.add(new JLabel(IMAGELIST.getImage("bigdot")));
+					case BIGDOT:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("bigdot"));
 						break;	
-					case "e":
-						this.add(new JLabel(IMAGELIST.getImage("empty")));
+					case EMPTY:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("empty"));
 						break;
-					case "x":
-						this.add(new JLabel(IMAGELIST.getImage("empty")));
+					case OUT:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("empty"));
 						break;
-					case "G":
-						this.add(new JLabel(IMAGELIST.getImage("ghost")));
+					case GHOST:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
 						break;
-					case "P":
-						if(move=="")this.add(new JLabel(IMAGELIST.getImage("pacRIGHT")));
-						else this.add(new JLabel(IMAGELIST.getImage("pac"+move)));
+					case PACMAN:
+						if(move=="")this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pacRIGHT"));
+						else this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pac"+move));
 						break;
-					}
+				}
+					
 			}
 		}
+		setBoardUI();
 	}
 
 	public void updatePanel(){ //updates the puzzlePanel whenever the player is moved
 		this.removeAll();
-		this.setBoard(this.board.getBoardLayout());
+		// this.setBoard(this.board.getBoardLayout());
+		this.updateBoard();
 		this.revalidate();
 		this.repaint();
 	}
@@ -171,12 +202,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 	
 	public void keyTyped(KeyEvent ke){
-	
-		
 	}
 	
-	public void keyReleased(KeyEvent ke){
-		
+	public void keyReleased(KeyEvent ke){	
 	}
 
 	public void run(){
@@ -217,11 +245,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);	
-		// }
+		}
 		// catch(IOException e){
-        //     e.printStackTrace();
-        //     System.out.println("Cannot find (or disconnected from) Server");
-        }catch(ArrayIndexOutOfBoundsException e){
+  //           e.printStackTrace();
+  //           System.out.println("Cannot find (or disconnected from) Server");
+  //       }
+		catch(ArrayIndexOutOfBoundsException e){
+			e.printStackTrace();
             System.out.println("Usage: java GreetingClient <server ip> <port no.> '<your message to the server>'");
         }
         
