@@ -4,7 +4,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
-public class ImageList{
+public class ImageList implements Constants{
 	private HashMap<String, ImageIcon> imageList = new HashMap<String, ImageIcon>();
 
 	public ImageList(){
