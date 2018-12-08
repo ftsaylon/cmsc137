@@ -59,7 +59,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.id = id;
 		this.players = new ArrayList<Player>(); // Holds the players
 
-		if(this.id == 1 || id == 2)	{ // ASSUMED FIRST THAT ID 1 and 2 are PACMANS
+		if(this.id == 1 || id == 2 || id == 3)	{ // ASSUMED FIRST THAT ID 1 and 2 are PACMANS
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
