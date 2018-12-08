@@ -24,7 +24,7 @@ class UDPPacket implements Constants {
         this.socket = socket;
     }
 
-    Character createCharacter(String characterName, Integer Id, Integer lives, Integer size, Integer xPos, Integer yPos){
+    Character createCharacter(String characterName, Integer Id, Integer lives, Integer size, Integer xPos, Integer yPos, Integer prevXPos, Integer prevYPos){
         Character character = 
             Character.newBuilder()
                 .setType(PacketType.CHARACTER)
@@ -34,6 +34,8 @@ class UDPPacket implements Constants {
                 .setSize(size)
                 .setXPos(xPos)
                 .setYPos(yPos)
+                .setPrevXPos(prevXPos)
+                .setPrevYPos(prevYPos)
                 .build();
         
         return character;

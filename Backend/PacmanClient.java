@@ -39,17 +39,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	Thread t = new Thread(this);
 
-	// final ImageIcon wall = new ImageIcon(getClass().getResource("/images/bluewall.jpg"));
-	// final ImageIcon dot = new ImageIcon(getClass().getResource("/images/coin.png"));
-	// final ImageIcon empty = new ImageIcon(getClass().getResource("/images/empty.jpg"));
-	// final ImageIcon ghost = new ImageIcon(getClass().getResource("/images/pacman-down.png"));
-	// final ImageIcon pacmanimg = new ImageIcon(getClass().getResource("/images/pacman-right.png")); 
-
 	private String server_ip;
 	private String player_name;
 	private boolean is_pacman;
 	private boolean is_ghost;
-
+	private String color;
 	public PacmanClient(String server_ip, String player_name, Integer clientPort, Integer id){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
@@ -74,9 +68,24 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		else{
 			this.is_ghost = true;
 			this.is_pacman = false;
+			switch(this.id){
+				case 2:
+					this.color = "RED";
+					break;
+				case 3:
+					this.color = "BLUE";
+					break;
+				case 4:
+					this.color = "PINK";
+					break;
+				case 5: 
+					this.color = "ORANGE";
+					break;
+
+			}
 		}
 
-		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos());
+		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 
 		// this.players.add(playerPacket); // Add instance of player to list of players
@@ -90,6 +99,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		setBackground(Color.BLACK);
 		setLayout(new GridLayout(31, 28));
 		setBoard(board.getBoardLayout());
+		setBoardUI();
 		revalidate();
 		repaint();
 
@@ -121,6 +131,35 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		System.out.println();
 	}
 
+	public Player getLastPlayer(){
+		Player lastPlayer = (Player) players.get(players.size() - 1);
+		Iterator iter = this.players.iterator();
+		while(iter.hasNext()){
+			 Player player = (Player) iter.next();
+			 if(!(player.getCharacter().getName().equals(this.player_name)))	lastPlayer = player;
+		}
+		return lastPlayer;
+	}
+	public void updateBoardLayout(int x, int y, int prevX, int prevY, int player_id){
+		this.board.updateBoardLayout(x, y, prevX, prevY, player_id);
+	}
+	public void updateOtherPlayer(){
+		// Iterator iter = this.players.iterator();
+		// while(iter.hasNext()){
+		// Player player = (Player) players.get(players.size() - 1);
+		Player lp = getLastPlayer();
+		Character lpChar = lp.getCharacter();
+		if(!(lpChar.getName().equals(this.player_name))){
+			this.boardUI[lpChar.getYPos()][lpChar.getXPos()] = new JLabel(IMAGELIST.getImage("pacmanRIGHT"));
+			// if(lpChar.getId()==1)
+				this.boardUI[lpChar.getPrevYPos()][lpChar.getPrevXPos()] = new JLabel(IMAGELIST.getImage("empty"));
+			this.board.updateBoardLayout(lpChar.getXPos(), lpChar.getYPos(), lpChar.getPrevXPos(), lpChar.getPrevYPos(), lpChar.getId());
+			// this.boardUI[lpChar.getPrevYPos()][lpChar.getPrevXPos()] = 
+			// if(this.lp.getCharacter().getId() == 1 || this.lp.getCharacter().getId() == 2)
+			// System.out.println("NOOOO");
+		}
+
+	}
 	public void updateBoard(){
 		int yPos, xPos, prevYPos, prevXPos;
 		if (this.is_pacman) {
@@ -139,9 +178,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			
 			
 		}
-		setBoardUI();
+		updateOtherPlayer();
+		
 	}
-
 	public void setBoardUI(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
@@ -178,13 +217,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					
 			}
 		}
-		setBoardUI();
 	}
 
 	public void updatePanel(){ //updates the puzzlePanel whenever the player is moved
 		this.removeAll();
-		// this.setBoard(this.board.getBoardLayout());
 		this.updateBoard();
+		this.setBoardUI();
 		this.revalidate();
 		this.repaint();
 	}
@@ -220,11 +258,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 
 		// Update Packets to be sent to server whenever there's movement
-		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos());
+		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
-		
 		udp_packet.send(this.playerPacket.toByteArray());	
-		
 		this.updatePanel();
 		checkGameOver();
 	}
@@ -242,6 +278,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.clientSocket = new DatagramSocket(this.clientPort);
 			
 			while(true){
+				try{
+					Thread.sleep(1);
+				}catch(Exception ioe){}
+
 				udp_packet.setSocket(this.clientSocket);
 				
 				buf = udp_packet.receive();
@@ -256,7 +296,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 						players.add(player); // Add other players to the list of players
 					}
 				}
-
+				this.updatePanel();
+				// if(game.getPlayerListList().size()==0)	System.out.println("JUSQ GG");
 				System.out.println(game.getPlayerListList());
 			}
 		} catch (SocketException e) {
@@ -286,23 +327,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
 			
-			// if(client.players.size() > 2){
-			// 	while(true){
-			// 		// Iterate through the list of other players
-			// 		Iterator iter = client.players.iterator();
-			// 		while(iter.hasNext()){
-			// 			Player other_player = (Player) iter.next();
-			// 			if(other_player != null){
-			// 				// Instantiate a new client object for spawning
-			// 				PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort, other_player.getId());
-			// 				pacmanFrame.add(other_client);
-			// 				pacmanFrame.pack();
-			// 				pacmanFrame.setVisible(true);
-			// 				client.updatePanel();
-			// 			}
-			// 		}
-			// 	}
-			// }
 
 			
 		}catch(ArrayIndexOutOfBoundsException e){
