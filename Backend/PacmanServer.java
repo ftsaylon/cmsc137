@@ -68,47 +68,85 @@ public class PacmanServer implements Runnable, Constants{
 
 
 	public void run(){
-		try{
-			Player playerPacketOld = null;
-			byte[] buf = null;
-			while(true){
-
+		Player playerPacketOld = null;
+		Player playerPacket = null;
+		byte[] buf = null;
+		while(true){
+			
+			try{
 				// Get the data from players
 				this.udp_packet.setSocket(this.serverSocket);
 				buf = this.udp_packet.receive();
 
-				Player playerPacket = Player.parseFrom(buf);
-				
-				if(playerPacketOld == null){
-					playerPacketOld = playerPacket;
-					this.game = udp_packet.createGameState(playerPacket);
-					System.out.println("Number of players: " + this.game.getPlayerListCount());
-					System.out.println(playerPacket.getName() + " joined the game");	
-				}else if(playerPacket != playerPacketOld){
-					this.game = udp_packet.addPlayerToGame(this.game, playerPacket);
-					System.out.println("Number of players: " + this.game.getPlayerListCount());
-					System.out.println(playerPacket.getName() + " joined the game");
-				}
-				
-				// DatagramPacket dp = new DatagramPacket(buf, buf.length);
-				playerPacketOld = playerPacket;
-				
-				Iterator iter = this.game.getPlayerListList().iterator();
-				while(iter.hasNext()){
-					Player player = (Player) iter.next();
-					// System.out.println(player.getName() + player.getPort());
-					this.udp_packet.sendToClient(player, this.game.toByteArray());
-				}
-
+				playerPacket = Player.parseFrom(buf);
+			
+			}catch(Exception ioe){
+				ioe.printStackTrace();
 			}
-		}catch(Exception ioe){
-			ioe.printStackTrace();
+
+			switch(gameStage){
+				case WAITING_FOR_PLAYERS:
+
+					if(playerPacketOld == null){
+						playerPacketOld = playerPacket;
+
+						try{
+							this.game = udp_packet.createGameState(playerPacket);
+						}catch(Exception ioe){
+							ioe.printStackTrace();
+						}
+
+						System.out.println("Number of players: " + this.game.getPlayerListCount());
+						System.out.println(playerPacket.getName() + " joined the game");	
+						this.playerCount++;
+
+					}else if(playerPacket != playerPacketOld){
+						try{
+							this.game = udp_packet.addPlayerToGame(this.game, playerPacket);
+						}catch(Exception ioe){
+							ioe.printStackTrace();
+						}
+						System.out.println("Number of players: " + this.game.getPlayerListCount());
+						System.out.println(playerPacket.getName() + " joined the game");
+						this.playerCount++;
+					}
+
+					playerPacketOld = playerPacket;
+
+					if(numPlayers==playerCount){
+						gameStage=GAME_START;
+						System.out.println("lol");
+						Iterator iter = this.game.getPlayerListList().iterator();
+						while(iter.hasNext()){
+							Player player = (Player) iter.next();
+							// System.out.println(player.getName() + player.getPort());
+							this.udp_packet.sendToClient(player, this.game.toByteArray());
+						}
+					}
+
+					break;
+				case GAME_START:
+					System.out.println("Game is starting...");
+					gameStage=IN_PROGRESS;
+					break;
+				case IN_PROGRESS:
+					System.out.println("Game is in progress");
+					Iterator iter = this.game.getPlayerListList().iterator();
+					while(iter.hasNext()){
+						Player player = (Player) iter.next();
+						// System.out.println(player.getName() + player.getPort());
+						this.udp_packet.sendToClient(player, this.game.toByteArray());
+					}
+					break;
+			}
+
+			
 		}
 	}
 
 	public static void main(String[] args){
 		if (args.length != 1){
-			System.out.println("Usage: java PacmanServer <number of players>");
+			System.out.println("Usage: java pacman.game.PacmanServer <number of players>");
 			System.exit(1);
 		}
 
