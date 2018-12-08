@@ -59,8 +59,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.is_connected = false;
 		this.move = "";
 		this.numberOfPlayers ++;
-		
+
 		this.clientPort = clientPort;
+
+
+		this.players = new ArrayList<Player>();
 
 		if(this.numberOfPlayers == 1)	{
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
@@ -77,6 +80,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 
 		// this.players.add(playerPacket); // Add instance of player to list of players
+
+		this.players.add(this.playerPacket);
 
 		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
 		this.setFocusable(true);
@@ -251,11 +256,16 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 				buf = udp_packet.receive();
 				GameState game = GameState.parseFrom(buf);
 
-				Iterator iter = game.getPlayerListList().iterator();
-				while(iter.hasNext()){
-					Player player = (Player) iter.next();
-					// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+				if(game.getPlayerListCount() != 0){
+					Iterator iter = game.getPlayerListList().iterator();
+					while(iter.hasNext()){
+						Player player = (Player) iter.next();
+						// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+						// System.out.println(player);
+						players.add(player);
+					}
 				}
+
 
 				System.out.println(game.getPlayerListList());
 			}
@@ -281,7 +291,26 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
-			pacmanFrame.setVisible(true);	
+			pacmanFrame.setVisible(true);
+			
+			if(client.players.size() > 2){
+				while(true){
+					Iterator iter = client.players.iterator();
+					while(iter.hasNext()){
+						Player other_player = (Player) iter.next();
+						if(other_player != null){
+							
+							// System.out.println("PLAYER" + other_player);
+							System.out.println(other_player.getCharacter().getName() + other_player.getPort());
+							PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort);
+							pacmanFrame.add(other_client);
+							client.updatePanel();
+						}
+					}
+				}
+			}
+
+			
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
         }
