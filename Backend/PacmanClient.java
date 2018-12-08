@@ -257,7 +257,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
 				}
 
-				// System.out.println(game.getPlayerListCount());
+				System.out.println(game.getPlayerListList());
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
