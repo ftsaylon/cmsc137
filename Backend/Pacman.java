@@ -21,6 +21,13 @@ public class Pacman implements Constants{
 		this.score = 0;
 	}
 
+	public Pacman(int xPos, int yPos){
+		this.lives = 3;
+		this.size = NORMAL_PACMAN;
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.score = 0;
+	}
 
 	public void pacmanDies(){
 		this.game.pacmanRespawn();
