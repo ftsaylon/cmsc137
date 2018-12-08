@@ -20,6 +20,8 @@ message UdpPacket{
         optional int32 size = 5;
         optional int32 xPos = 6;
         optional int32 yPos = 7;
+        optional int32 prevXPos = 8;
+        optional int32 prevYPos = 9;
     }
 
     message Player {

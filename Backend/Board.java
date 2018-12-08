@@ -21,6 +21,23 @@ public class Board implements Constants{
 	public String[][] getBoardLayout(){
 		return this.boardLayout;
 	}
+	public void updateBoardLayout(int x, int y, int prevX, int prevY, int player){
+		if(player == 1){
+			this.boardLayout[y][x] = PACMAN;
+				this.boardLayout[prevY][prevX] = EMPTY;
+		}
+		else {
+			if(this.boardLayout[y][x] == DOT || this.boardLayout[y][x] == BIGDOT) this.boardLayout[y][x] = GHOST_WITH_DOT;
+			else this.boardLayout[y][x] = GHOST;
+			if(this.boardLayout[prevY][prevX] ==  GHOST_WITH_DOT){
+				this.boardLayout[prevY][prevX] = DOT;
+				// BIG DOT TO BE ADDED!!
+			}	
+			else	this.boardLayout[prevY][prevX] = EMPTY;
+		}
+
+
+	}
 	public int getPacmanXPos(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)

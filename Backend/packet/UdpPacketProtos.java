@@ -281,6 +281,24 @@ public final class UdpPacketProtos {
        * <code>optional int32 yPos = 7;</code>
        */
       int getYPos();
+
+      /**
+       * <code>optional int32 prevXPos = 8;</code>
+       */
+      boolean hasPrevXPos();
+      /**
+       * <code>optional int32 prevXPos = 8;</code>
+       */
+      int getPrevXPos();
+
+      /**
+       * <code>optional int32 prevYPos = 9;</code>
+       */
+      boolean hasPrevYPos();
+      /**
+       * <code>optional int32 prevYPos = 9;</code>
+       */
+      int getPrevYPos();
     }
     /**
      * Protobuf type {@code UdpPacket.Character}
@@ -364,6 +382,16 @@ public final class UdpPacketProtos {
               case 56: {
                 bitField0_ |= 0x00000040;
                 yPos_ = input.readInt32();
+                break;
+              }
+              case 64: {
+                bitField0_ |= 0x00000080;
+                prevXPos_ = input.readInt32();
+                break;
+              }
+              case 72: {
+                bitField0_ |= 0x00000100;
+                prevYPos_ = input.readInt32();
                 break;
               }
               default: {
@@ -533,6 +561,36 @@ public final class UdpPacketProtos {
         return yPos_;
       }
 
+      public static final int PREVXPOS_FIELD_NUMBER = 8;
+      private int prevXPos_;
+      /**
+       * <code>optional int32 prevXPos = 8;</code>
+       */
+      public boolean hasPrevXPos() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional int32 prevXPos = 8;</code>
+       */
+      public int getPrevXPos() {
+        return prevXPos_;
+      }
+
+      public static final int PREVYPOS_FIELD_NUMBER = 9;
+      private int prevYPos_;
+      /**
+       * <code>optional int32 prevYPos = 9;</code>
+       */
+      public boolean hasPrevYPos() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>optional int32 prevYPos = 9;</code>
+       */
+      public int getPrevYPos() {
+        return prevYPos_;
+      }
+
       private byte memoizedIsInitialized = -1;
       @java.lang.Override
       public final boolean isInitialized() {
@@ -576,6 +634,12 @@ public final class UdpPacketProtos {
         if (((bitField0_ & 0x00000040) == 0x00000040)) {
           output.writeInt32(7, yPos_);
         }
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          output.writeInt32(8, prevXPos_);
+        }
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          output.writeInt32(9, prevYPos_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -611,6 +675,14 @@ public final class UdpPacketProtos {
         if (((bitField0_ & 0x00000040) == 0x00000040)) {
           size += com.google.protobuf.CodedOutputStream
             .computeInt32Size(7, yPos_);
+        }
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(8, prevXPos_);
+        }
+        if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeInt32Size(9, prevYPos_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -662,6 +734,16 @@ public final class UdpPacketProtos {
           result = result && (getYPos()
               == other.getYPos());
         }
+        result = result && (hasPrevXPos() == other.hasPrevXPos());
+        if (hasPrevXPos()) {
+          result = result && (getPrevXPos()
+              == other.getPrevXPos());
+        }
+        result = result && (hasPrevYPos() == other.hasPrevYPos());
+        if (hasPrevYPos()) {
+          result = result && (getPrevYPos()
+              == other.getPrevYPos());
+        }
         result = result && unknownFields.equals(other.unknownFields);
         return result;
       }
@@ -700,6 +782,14 @@ public final class UdpPacketProtos {
         if (hasYPos()) {
           hash = (37 * hash) + YPOS_FIELD_NUMBER;
           hash = (53 * hash) + getYPos();
+        }
+        if (hasPrevXPos()) {
+          hash = (37 * hash) + PREVXPOS_FIELD_NUMBER;
+          hash = (53 * hash) + getPrevXPos();
+        }
+        if (hasPrevYPos()) {
+          hash = (37 * hash) + PREVYPOS_FIELD_NUMBER;
+          hash = (53 * hash) + getPrevYPos();
         }
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
@@ -848,6 +938,10 @@ public final class UdpPacketProtos {
           bitField0_ = (bitField0_ & ~0x00000020);
           yPos_ = 0;
           bitField0_ = (bitField0_ & ~0x00000040);
+          prevXPos_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000080);
+          prevYPos_ = 0;
+          bitField0_ = (bitField0_ & ~0x00000100);
           return this;
         }
 
@@ -903,6 +997,14 @@ public final class UdpPacketProtos {
           if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
             result.yPos_ = yPos_;
             to_bitField0_ |= 0x00000040;
+          }
+          if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+            result.prevXPos_ = prevXPos_;
+            to_bitField0_ |= 0x00000080;
+          }
+          if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+            result.prevYPos_ = prevYPos_;
+            to_bitField0_ |= 0x00000100;
           }
           result.bitField0_ = to_bitField0_;
           onBuilt();
@@ -975,6 +1077,12 @@ public final class UdpPacketProtos {
           }
           if (other.hasYPos()) {
             setYPos(other.getYPos());
+          }
+          if (other.hasPrevXPos()) {
+            setPrevXPos(other.getPrevXPos());
+          }
+          if (other.hasPrevYPos()) {
+            setPrevYPos(other.getPrevYPos());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -1281,6 +1389,70 @@ public final class UdpPacketProtos {
         public Builder clearYPos() {
           bitField0_ = (bitField0_ & ~0x00000040);
           yPos_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private int prevXPos_ ;
+        /**
+         * <code>optional int32 prevXPos = 8;</code>
+         */
+        public boolean hasPrevXPos() {
+          return ((bitField0_ & 0x00000080) == 0x00000080);
+        }
+        /**
+         * <code>optional int32 prevXPos = 8;</code>
+         */
+        public int getPrevXPos() {
+          return prevXPos_;
+        }
+        /**
+         * <code>optional int32 prevXPos = 8;</code>
+         */
+        public Builder setPrevXPos(int value) {
+          bitField0_ |= 0x00000080;
+          prevXPos_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 prevXPos = 8;</code>
+         */
+        public Builder clearPrevXPos() {
+          bitField0_ = (bitField0_ & ~0x00000080);
+          prevXPos_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private int prevYPos_ ;
+        /**
+         * <code>optional int32 prevYPos = 9;</code>
+         */
+        public boolean hasPrevYPos() {
+          return ((bitField0_ & 0x00000100) == 0x00000100);
+        }
+        /**
+         * <code>optional int32 prevYPos = 9;</code>
+         */
+        public int getPrevYPos() {
+          return prevYPos_;
+        }
+        /**
+         * <code>optional int32 prevYPos = 9;</code>
+         */
+        public Builder setPrevYPos(int value) {
+          bitField0_ |= 0x00000100;
+          prevYPos_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>optional int32 prevYPos = 9;</code>
+         */
+        public Builder clearPrevYPos() {
+          bitField0_ = (bitField0_ & ~0x00000100);
+          prevYPos_ = 0;
           onChanged();
           return this;
         }
@@ -3941,20 +4113,21 @@ public final class UdpPacketProtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\026proto/udp_packet.proto\"\335\003\n\tUdpPacket\022#" +
-      "\n\004type\030\001 \002(\0162\025.UdpPacket.PacketType\032\203\001\n\t" +
+      "\n\026proto/udp_packet.proto\"\201\004\n\tUdpPacket\022#" +
+      "\n\004type\030\001 \002(\0162\025.UdpPacket.PacketType\032\247\001\n\t" +
       "Character\022#\n\004type\030\001 \002(\0162\025.UdpPacket.Pack" +
       "etType\022\014\n\004name\030\002 \002(\t\022\n\n\002id\030\003 \001(\005\022\r\n\005live" +
       "s\030\004 \001(\005\022\014\n\004size\030\005 \001(\005\022\014\n\004xPos\030\006 \001(\005\022\014\n\004y" +
-      "Pos\030\007 \001(\005\032\222\001\n\006Player\022#\n\004type\030\001 \002(\0162\025.Udp" +
-      "Packet.PacketType\022\014\n\004name\030\002 \002(\t\022\n\n\002id\030\003 " +
-      "\001(\005\022\'\n\tcharacter\030\004 \001(\0132\024.UdpPacket.Chara" +
-      "cter\022\022\n\nip_address\030\005 \001(\t\022\014\n\004port\030\006 \001(\005\032X" +
-      "\n\tGameState\022#\n\004type\030\001 \002(\0162\025.UdpPacket.Pa" +
-      "cketType\022&\n\013player_list\030\002 \003(\0132\021.UdpPacke" +
-      "t.Player\"6\n\nPacketType\022\r\n\tCHARACTER\020\000\022\n\n" +
-      "\006PLAYER\020\001\022\r\n\tGAMESTATE\020\002B\031\n\006packetB\017UdpP" +
-      "acketProtos"
+      "Pos\030\007 \001(\005\022\020\n\010prevXPos\030\010 \001(\005\022\020\n\010prevYPos\030" +
+      "\t \001(\005\032\222\001\n\006Player\022#\n\004type\030\001 \002(\0162\025.UdpPack" +
+      "et.PacketType\022\014\n\004name\030\002 \002(\t\022\n\n\002id\030\003 \001(\005\022" +
+      "\'\n\tcharacter\030\004 \001(\0132\024.UdpPacket.Character" +
+      "\022\022\n\nip_address\030\005 \001(\t\022\014\n\004port\030\006 \001(\005\032X\n\tGa" +
+      "meState\022#\n\004type\030\001 \002(\0162\025.UdpPacket.Packet" +
+      "Type\022&\n\013player_list\030\002 \003(\0132\021.UdpPacket.Pl" +
+      "ayer\"6\n\nPacketType\022\r\n\tCHARACTER\020\000\022\n\n\006PLA" +
+      "YER\020\001\022\r\n\tGAMESTATE\020\002B\031\n\006packetB\017UdpPacke" +
+      "tProtos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3979,7 +4152,7 @@ public final class UdpPacketProtos {
     internal_static_UdpPacket_Character_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_UdpPacket_Character_descriptor,
-        new java.lang.String[] { "Type", "Name", "Id", "Lives", "Size", "XPos", "YPos", });
+        new java.lang.String[] { "Type", "Name", "Id", "Lives", "Size", "XPos", "YPos", "PrevXPos", "PrevYPos", });
     internal_static_UdpPacket_Player_descriptor =
       internal_static_UdpPacket_descriptor.getNestedTypes().get(1);
     internal_static_UdpPacket_Player_fieldAccessorTable = new
