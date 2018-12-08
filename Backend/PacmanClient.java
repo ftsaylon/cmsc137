@@ -27,6 +27,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	static final int NOT_OVER = 0;
 	private static int numberOfPlayers = 0;
 
+	private int id;
 	private int clientPort;
 
 	List<Player> players;
@@ -49,7 +50,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private boolean is_pacman;
 	private boolean is_ghost;
 
-	public PacmanClient(String server_ip, String player_name, Integer clientPort){
+	public PacmanClient(String server_ip, String player_name, Integer clientPort, Integer id){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.map = new Map(3);
@@ -61,10 +62,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		PacmanClient.numberOfPlayers ++;
 
 		this.clientPort = clientPort; // Port of this client
-
+		this.id = id;
 		this.players = new ArrayList<Player>(); // Holds the players
 
-		if(PacmanClient.numberOfPlayers == 1)	{
+		if(this.id == 1 || id == 2)	{ // ASSUMED FIRST THAT ID 1 and 2 are PACMANS
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
@@ -75,7 +76,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.is_pacman = false;
 		}
 
-		this.characterPacket = udp_packet.createCharacter(player_name, numberOfPlayers, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos());
+		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 
 		// this.players.add(playerPacket); // Add instance of player to list of players
@@ -267,13 +268,16 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public static void main(String[] args){
-		JFrame pacmanFrame = new JFrame("Pacman Game" + args[1]);
+		JFrame pacmanFrame = new JFrame("Pacman Game " + args[1]);
 		
 		try{
 			String serverName = args[0];
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
-			PacmanClient client = new PacmanClient(serverName, playerName, clientPort);
+			Integer id = Integer.parseInt(args[3]);
+
+			System.out.println(args[0] + args[1] + args[2] + args[3]);
+			PacmanClient client = new PacmanClient(serverName, playerName, clientPort, id);
 			
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			pacmanFrame.setPreferredSize(new Dimension(775, 700));
@@ -282,23 +286,23 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
 			
-			if(client.players.size() > 2){
-				while(true){
-					// Iterate through the list of other players
-					Iterator iter = client.players.iterator();
-					while(iter.hasNext()){
-						Player other_player = (Player) iter.next();
-						if(other_player != null){
-							// Instantiate a new client object for spawning
-							PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort);
-							pacmanFrame.add(other_client);
-							pacmanFrame.pack();
-							pacmanFrame.setVisible(true);
-							client.updatePanel();
-						}
-					}
-				}
-			}
+			// if(client.players.size() > 2){
+			// 	while(true){
+			// 		// Iterate through the list of other players
+			// 		Iterator iter = client.players.iterator();
+			// 		while(iter.hasNext()){
+			// 			Player other_player = (Player) iter.next();
+			// 			if(other_player != null){
+			// 				// Instantiate a new client object for spawning
+			// 				PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort, other_player.getId());
+			// 				pacmanFrame.add(other_client);
+			// 				pacmanFrame.pack();
+			// 				pacmanFrame.setVisible(true);
+			// 				client.updatePanel();
+			// 			}
+			// 		}
+			// 	}
+			// }
 
 			
 		}catch(ArrayIndexOutOfBoundsException e){
