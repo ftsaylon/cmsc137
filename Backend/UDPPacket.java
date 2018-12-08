@@ -24,7 +24,7 @@ class UDPPacket implements Constants {
         this.socket = socket;
     }
 
-    Character createCharacter(String characterName, String Id, String lives, String size, String xPos, String yPos){
+    Character createCharacter(String characterName, Integer Id, Integer lives, Integer size, Integer xPos, Integer yPos){
         Character character = 
             Character.newBuilder()
                 .setType(PacketType.CHARACTER)
@@ -39,12 +39,14 @@ class UDPPacket implements Constants {
         return character;
     }
 
-    Player createPlayer(String playerName, Character character){
+    Player createPlayer(String playerName, Character character, Integer clientPort){
         Player player = 
             Player.newBuilder()
                 .setType(PacketType.PLAYER)
                 .setName(playerName)
+                .setId(character.getId())
                 .setCharacter(character)
+                .setPort(clientPort)
                 .build();
         
         return player;
@@ -68,6 +70,20 @@ class UDPPacket implements Constants {
         return gameState;
     }
 
+    GameState addPlayerToGame(GameState gameState1, Player player){
+        GameState gameState2 = null;
+        if(player != null){
+            gameState2 = 
+                GameState.newBuilder()
+                    .setType(gameState1.getType())
+                    .addPlayerList(player)
+                    .mergeFrom(gameState1)
+                    .build();
+        }
+        return gameState2;
+    }
+
+
     void send(byte[] buf) {
         try {
             DatagramPacket datagramPacket = new DatagramPacket(
@@ -76,6 +92,8 @@ class UDPPacket implements Constants {
                 InetAddress.getLocalHost(),
                 PORT
             );
+
+            System.out.println(datagramPacket.getPort());
 
             socket.send(datagramPacket);
             
@@ -101,5 +119,25 @@ class UDPPacket implements Constants {
 		}
         
         return buf;
+    }
+
+    void sendToClient(Player player, byte[] buf) {
+        try {
+            DatagramPacket datagramPacket = new DatagramPacket(
+                buf, 
+                buf.length,
+                InetAddress.getLocalHost(),
+                player.getPort()
+            );
+
+            socket.send(datagramPacket);
+            
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

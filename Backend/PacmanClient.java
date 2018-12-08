@@ -4,6 +4,7 @@ package pacman.game;
 // import packet.CharacterProtos.Character;
 import packet.UdpPacketProtos.UdpPacket.Player;
 import packet.UdpPacketProtos.UdpPacket.Character;
+import packet.UdpPacketProtos.UdpPacket.GameState;
 
 import java.net.*;
 import javax.swing.*;
@@ -11,8 +12,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.awt.event.*;
-
-import java.net.*;
+import java.util.List;
 
 public class PacmanClient extends JPanel implements Runnable, KeyListener, Constants{
 	private Pacman pacman;
@@ -25,8 +25,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private Map map;
 	private HashMap<Ghost, String> ghosts;
 	static final int NOT_OVER = 0;
-
 	private static int numberOfPlayers = 0;
+
+	private int clientPort;
+
+	List<Player> players;
+
 	DatagramSocket clientSocket; 
 	UDPPacket udp_packet = new UDPPacket();
 	Player playerPacket;
@@ -45,7 +49,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private boolean is_pacman;
 	private boolean is_ghost;
 
-	public PacmanClient(String server_ip, String player_name){
+	public PacmanClient(String server_ip, String player_name, Integer clientPort){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.map = new Map(3);
@@ -55,6 +59,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.is_connected = false;
 		this.move = "";
 		this.numberOfPlayers ++;
+		
+		this.clientPort = clientPort;
+
 		if(this.numberOfPlayers == 1)	{
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
@@ -65,8 +72,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.is_ghost = true;
 			this.is_pacman = false;
 		}
-		this.characterPacket = udp_packet.createCharacter(player_name, Integer.toString(numberOfPlayers), Integer.toString(pacman.getNumberOfLives()), Integer.toString(pacman.getSize()), Integer.toString(pacman.getXPos()), Integer.toString(pacman.getYPos()));
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
+
+		this.characterPacket = udp_packet.createCharacter(player_name, numberOfPlayers, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos());
+		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+
+		// this.players.add(playerPacket); // Add instance of player to list of players
 
 		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
 		this.setFocusable(true);
@@ -111,7 +121,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			prevXPos = this.pacman.getPrevXPos();
 			
 			if(!(prevYPos == yPos && prevXPos == xPos)){
-				System.out.println("LMAO");
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
 			}
 			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
@@ -208,8 +217,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 
 		// Update Packets to be sent to server whenever there's movement
-		this.characterPacket = udp_packet.createCharacter(player_name, "1", Integer.toString(this.pacman.getNumberOfLives()), Integer.toString(this.pacman.getSize()), Integer.toString(this.pacman.getXPos()), Integer.toString(this.pacman.getYPos()));
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket);
+		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos());
+		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 		
 		this.updatePanel();
 		checkGameOver();
@@ -224,7 +233,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	public void run(){
 		try {
 			Player playerPacketOld = null;
-			this.clientSocket = new DatagramSocket();
+			byte[] buf = null;
+			this.clientSocket = new DatagramSocket(this.clientPort);
 			
 			while(true){
 				udp_packet.setSocket(this.clientSocket);
@@ -237,10 +247,23 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 				}
 				
 				playerPacketOld = playerPacket;
+
+				buf = udp_packet.receive();
+				GameState game = GameState.parseFrom(buf);
+
+				Iterator iter = game.getPlayerListList().iterator();
+				while(iter.hasNext()){
+					Player player = (Player) iter.next();
+					// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+				}
+
+				// System.out.println(game.getPlayerListCount());
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
-		} 
+		} catch(Exception ioe){
+			ioe.printStackTrace();
+		}
 		
 	}
 
@@ -250,7 +273,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		try{
 			String serverName = args[0];
 			String playerName = args[1];
-			PacmanClient client = new PacmanClient(serverName, playerName);
+			Integer clientPort = Integer.parseInt(args[2]);
+			PacmanClient client = new PacmanClient(serverName, playerName, clientPort);
 			
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			pacmanFrame.setPreferredSize(new Dimension(775, 700));
@@ -259,7 +283,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);	
 		}catch(ArrayIndexOutOfBoundsException e){
-            System.out.println("Usage: java PacmanClient <server ip> '<name>'");
+            System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
         }
         
 	
