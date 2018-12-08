@@ -115,27 +115,23 @@ public class PacmanServer implements Runnable, Constants{
 
 					if(numPlayers==playerCount){
 						gameStage=GAME_START;
-						Iterator iter = this.game.getPlayerListList().iterator();
-						while(iter.hasNext()){
-							Player player = (Player) iter.next();
-							// System.out.println(player.getName() + player.getPort());
-							this.udp_packet.sendToClient(player, this.game.toByteArray());
-						}
 					}
-
+					
 					break;
+					
 				case GAME_START:
 					System.out.println("Game is starting...");
 					gameStage=IN_PROGRESS;
+					
 					break;
+
 				case IN_PROGRESS:
 					System.out.println("Game is in progress");
 					Iterator iter = this.game.getPlayerListList().iterator();
-					while(iter.hasNext()){
-						Player player = (Player) iter.next();
-						// System.out.println(player.getName() + player.getPort());
-						this.udp_packet.sendToClient(player, this.game.toByteArray());
-					}
+						while(iter.hasNext()){
+							Player player = (Player) iter.next();
+							this.udp_packet.sendToClient(player, this.game.toByteArray());
+						}
 					break;
 			}
 
