@@ -59,8 +59,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.is_connected = false;
 		this.move = "";
 		this.numberOfPlayers ++;
-		
+
 		this.clientPort = clientPort;
+
+
+		this.players = new ArrayList<Player>();
 
 		if(this.numberOfPlayers == 1)	{
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
@@ -78,6 +81,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 		// this.players.add(playerPacket); // Add instance of player to list of players
 
+		this.players.add(this.playerPacket);
+
 		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
 		this.setFocusable(true);
 		this.addKeyListener(this);
@@ -89,6 +94,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		repaint();
 
 		t.start();
+		udp_packet.send(this.playerPacket.toByteArray());
 	}
 
 	@Override
@@ -105,7 +111,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		String[][] bl = this.board.getBoardLayout();
 		for(int i = 0; i < 31; i++){
 			for(int j = 0; j < 28; j++){
-				System.out.print(bl[i][j]);
+				// System.out.print(bl[i][j]);
 			}
 			System.out.println();
 		}
@@ -220,6 +226,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 		
+		udp_packet.send(this.playerPacket.toByteArray());	
+		
 		this.updatePanel();
 		checkGameOver();
 	}
@@ -232,30 +240,26 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	public void run(){
 		try {
-			Player playerPacketOld = null;
+			// Player playerPacketOld = null;
 			byte[] buf = null;
 			this.clientSocket = new DatagramSocket(this.clientPort);
 			
 			while(true){
 				udp_packet.setSocket(this.clientSocket);
 				
-				if(playerPacketOld == null){
-					playerPacketOld = playerPacket;
-					udp_packet.send(this.playerPacket.toByteArray());
-				}else if(playerPacket.getCharacter().getXPos() != playerPacketOld.getCharacter().getXPos() || playerPacket.getCharacter().getYPos() != playerPacketOld.getCharacter().getYPos()){
-					udp_packet.send(this.playerPacket.toByteArray());	
-				}
-				
-				playerPacketOld = playerPacket;
-
 				buf = udp_packet.receive();
 				GameState game = GameState.parseFrom(buf);
 
-				Iterator iter = game.getPlayerListList().iterator();
-				while(iter.hasNext()){
-					Player player = (Player) iter.next();
-					// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+				if(game.getPlayerListCount() != 0){
+					Iterator iter = game.getPlayerListList().iterator();
+					while(iter.hasNext()){
+						Player player = (Player) iter.next();
+						// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+						// System.out.println(player);
+						players.add(player);
+					}
 				}
+
 
 				System.out.println(game.getPlayerListList());
 			}
@@ -281,7 +285,28 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
-			pacmanFrame.setVisible(true);	
+			pacmanFrame.setVisible(true);
+			
+			if(client.players.size() > 2){
+				while(true){
+					Iterator iter = client.players.iterator();
+					while(iter.hasNext()){
+						Player other_player = (Player) iter.next();
+						if(other_player != null){
+							
+							// System.out.println("PLAYER" + other_player);
+							PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort);
+							System.out.println(other_client);
+							pacmanFrame.add(other_client);
+							pacmanFrame.pack();
+							pacmanFrame.setVisible(true);
+							client.updatePanel();
+						}
+					}
+				}
+			}
+
+			
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
         }
