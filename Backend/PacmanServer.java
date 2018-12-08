@@ -71,45 +71,40 @@ public class PacmanServer implements Runnable, Constants{
 		Player playerPacketOld = null;
 		Player playerPacket = null;
 		byte[] buf = null;
+		try{
+			// Get the data from players
+			this.udp_packet.setSocket(this.serverSocket);
+		}catch(Exception ioe){
+			ioe.printStackTrace();
+		}
+
 		while(true){
 			
+			buf = this.udp_packet.receive();
 			try{
 				// Get the data from players
-				this.udp_packet.setSocket(this.serverSocket);
-				buf = this.udp_packet.receive();
-
 				playerPacket = Player.parseFrom(buf);
-				System.out.println(playerPacket);
 			}catch(Exception ioe){
 				ioe.printStackTrace();
 			}
-
+	
 			switch(gameStage){
 				case WAITING_FOR_PLAYERS:
 
 					if(playerPacketOld == null){
 						playerPacketOld = playerPacket;
 
-						try{
-							this.game = udp_packet.createGameState(playerPacket);
-						}catch(Exception ioe){
-							ioe.printStackTrace();
-						}
-
+						this.game = udp_packet.createGameState(playerPacket);
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");	
 						this.playerCount++;
 
-					}else if(playerPacket != playerPacketOld){
-						try{
-							this.game = udp_packet.addPlayerToGame(this.game, playerPacket);
-						}catch(Exception ioe){
-							ioe.printStackTrace();
-						}
+					}else if(playerPacket.getCharacter().getName() != playerPacketOld.getCharacter().getName()){
+						this.game = udp_packet.addPlayerToGame(this.game, playerPacket);
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");
 						this.playerCount++;
-					}
+					}else continue;
 
 					playerPacketOld = playerPacket;
 
@@ -127,6 +122,10 @@ public class PacmanServer implements Runnable, Constants{
 
 				case IN_PROGRESS:
 					System.out.println("Game is in progress");
+					Integer index = 0;
+					this.game = this.game.toBuilder().setPlayerList(playerPacket.getId()-1, playerPacket).build();
+					
+					System.out.println(this.game.getPlayerListList());
 					Iterator iter = this.game.getPlayerListList().iterator();
 						while(iter.hasNext()){
 							Player player = (Player) iter.next();

@@ -83,6 +83,13 @@ class UDPPacket implements Constants {
         return gameState2;
     }
 
+    // GameState updatePlayer(GameState gameState1, Player player){
+    //     GameState gameState2 = null;
+    //     if(player != null){
+    //         gameState2 = 
+    //     }
+    // }
+
 
     void send(byte[] buf) {
         try {
