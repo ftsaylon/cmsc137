@@ -58,14 +58,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.gameOver = false;
 		this.is_connected = false;
 		this.move = "";
-		this.numberOfPlayers ++;
+		PacmanClient.numberOfPlayers ++;
 
-		this.clientPort = clientPort;
+		this.clientPort = clientPort; // Port of this client
 
+		this.players = new ArrayList<Player>(); // Holds the players
 
-		this.players = new ArrayList<Player>();
-
-		if(this.numberOfPlayers == 1)	{
+		if(PacmanClient.numberOfPlayers == 1)	{
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
@@ -93,7 +92,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		revalidate();
 		repaint();
 
+		// Start Client thread
 		t.start();
+
+		// Send playerPacket upon initialization of client
 		udp_packet.send(this.playerPacket.toByteArray());
 	}
 
@@ -138,11 +140,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 		setBoardUI();
 	}
+
 	public void setBoardUI(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				this.add(this.boardUI[i][j]);
 	}
+
 	public void setBoard(String[][] boardLayout){
 		for(int i = 0; i < BOARD_LENGTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
@@ -184,23 +188,15 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.repaint();
 	}
 
-	// public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
+	public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
 	// 	if(state.getGameStatus() == GAME_OVER){
 	// 		this.gameOver = true;
 	// 		this.setFocusable(false);
 	// 	}
-	// }
+	}
 
 	public void pacmanRespawn(){
 		
-	}
-
-	public void checkGameOver(){ //checks if the puzzle is solved and if it is, the panel will not be focused
-		
-		// if(state.getGameStatus() == GAME_OVER){
-		// 	this.gameOver = true;
-		// 	this.setFocusable(false);
-		// }
 	}
 
 	public Board getGameBoard(){
@@ -256,10 +252,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 						Player player = (Player) iter.next();
 						// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
 						// System.out.println(player);
-						players.add(player);
+						players.add(player); // Add other players to the list of players
 					}
 				}
-
 
 				System.out.println(game.getPlayerListList());
 			}
@@ -272,7 +267,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public static void main(String[] args){
-		JFrame pacmanFrame = new JFrame("pacman Game");
+		JFrame pacmanFrame = new JFrame("Pacman Game" + args[1]);
 		
 		try{
 			String serverName = args[0];
@@ -289,14 +284,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			
 			if(client.players.size() > 2){
 				while(true){
+					// Iterate through the list of other players
 					Iterator iter = client.players.iterator();
 					while(iter.hasNext()){
 						Player other_player = (Player) iter.next();
 						if(other_player != null){
-							
-							// System.out.println("PLAYER" + other_player);
+							// Instantiate a new client object for spawning
 							PacmanClient other_client = new PacmanClient("localhost", other_player.getCharacter().getName(), clientPort);
-							System.out.println(other_client);
 							pacmanFrame.add(other_client);
 							pacmanFrame.pack();
 							pacmanFrame.setVisible(true);
