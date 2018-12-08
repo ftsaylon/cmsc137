@@ -79,7 +79,7 @@ public class PacmanServer implements Runnable, Constants{
 				buf = this.udp_packet.receive();
 
 				playerPacket = Player.parseFrom(buf);
-			
+				System.out.println(playerPacket);
 			}catch(Exception ioe){
 				ioe.printStackTrace();
 			}
@@ -115,7 +115,6 @@ public class PacmanServer implements Runnable, Constants{
 
 					if(numPlayers==playerCount){
 						gameStage=GAME_START;
-						System.out.println("lol");
 						Iterator iter = this.game.getPlayerListList().iterator();
 						while(iter.hasNext()){
 							Player player = (Player) iter.next();
