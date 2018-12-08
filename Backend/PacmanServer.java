@@ -90,7 +90,7 @@ public class PacmanServer implements Runnable, Constants{
 						System.out.println(playerPacket.getName() + " joined the game");	
 						this.playerCount++;
 
-					}else if(playerPacket.getCharacter().getName() != playerPacketOld.getCharacter().getName()){
+					}else if(playerPacket.getCharacter().getId() != playerPacketOld.getCharacter().getId()){
 						this.game = this.game.toBuilder().addPlayerList(playerPacket).build(); // Add to player list in Game Packet
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");
@@ -101,8 +101,8 @@ public class PacmanServer implements Runnable, Constants{
 
 					if(numPlayers==playerCount){
 						this.gameStage=GAME_START;
+						// broadcast(this.game.toByteArray());
 					}
-					// broadcast(this.game.toByteArray());
 					break;
 					
 				case GAME_START:
@@ -112,7 +112,7 @@ public class PacmanServer implements Runnable, Constants{
 					break;
 
 				case IN_PROGRESS:
-					System.out.println("Game is in progress");
+					System.out.println("Game is in progress...");
 					Integer index = 0;
 					this.game = this.game.toBuilder().setPlayerList(playerPacket.getId()-1, playerPacket).build();
 					
@@ -121,7 +121,6 @@ public class PacmanServer implements Runnable, Constants{
 					break;
 			}
 
-			
 		}
 	}
 
