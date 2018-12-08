@@ -103,11 +103,19 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		revalidate();
 		repaint();
 
+		try{
+			this.clientSocket = new DatagramSocket(this.clientPort);
+			this.udp_packet.setSocket(this.clientSocket); 
+			this.udp_packet.send(this.playerPacket.toByteArray()); // Send playerPacket upon initialization of client
+		}catch (IOException e) {
+			e.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
 		// Start Client thread
 		t.start();
 
-		// Send playerPacket upon initialization of client
-		udp_packet.send(this.playerPacket.toByteArray());
 	}
 
 	@Override
@@ -272,39 +280,32 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public void run(){
-		try {
-			// Player playerPacketOld = null;
-			byte[] buf = null;
-			this.clientSocket = new DatagramSocket(this.clientPort);
-			
-			while(true){
-				try{
-					Thread.sleep(1);
-				}catch(Exception ioe){}
+		byte[] buf = null;
+		
+		while(true){
+			try{
+				Thread.sleep(1);
+			}catch(Exception ioe){}
 
-				udp_packet.setSocket(this.clientSocket);
-				
-				buf = udp_packet.receive();
-				GameState game = GameState.parseFrom(buf);
+			// Receive Game State Packet from Server
+			buf = this.udp_packet.receive();
+			GameState game = this.udp_packet.parseToGameState(buf);
 
-				if(game.getPlayerListCount() != 0){
-					Iterator iter = game.getPlayerListList().iterator();
-					while(iter.hasNext()){
-						Player player = (Player) iter.next();
-						// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
-						// System.out.println(player);
-						players.add(player); // Add other players to the list of players
-					}
+			// Add players from server to list of players here in client
+			if(game.getPlayerListCount() != 0){
+				Iterator iter = game.getPlayerListList().iterator();
+				while(iter.hasNext()){
+					Player player = (Player) iter.next();
+					// INSERT CODE TO PLOT OTHER PLAYERS TO THIS BOARD
+					// System.out.println(player);
+					players.add(player); // Add other players to the list of players
 				}
-				this.updatePanel();
-				// if(game.getPlayerListList().size()==0)	System.out.println("JUSQ GG");
-				System.out.println(game.getPlayerListList());
 			}
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch(Exception ioe){
-			ioe.printStackTrace();
+			this.updatePanel(); // Update the panel
+			// if(game.getPlayerListList().size()==0)	System.out.println("JUSQ GG");
+			System.out.println(game.getPlayerListList());
 		}
+		
 		
 	}
 
