@@ -21,7 +21,7 @@ public class Pacman implements Constants{
 		this.score = 0;
 	}
 
-	public Pacman(int xPos, int yPos){
+	public Pacman(int xPos, int yPos, int lives, int size){
 		this.lives = 3;
 		this.size = NORMAL_PACMAN;
 		this.xPos = xPos;
