@@ -461,6 +461,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	public static void main(String[] args){
 		JFrame pacmanFrame = new JFrame("Pacman Game " + args[1]);
 		JFrame chatFrame  = new JFrame("Chat Frame");
+		
 		try{
 			String serverName = args[0];
 			String playerName = args[1];
@@ -479,6 +480,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
 
+			System.out.println("CREATE CHAT ");
 			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
 			chatFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			chatFrame.setPreferredSize(new Dimension(200, 700));
@@ -486,9 +488,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			chatFrame.add(chatPanel);
 			chatFrame.pack();
 			chatFrame.setVisible(true);
-			
+			chatPanel.startChat();
 
-			
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
         }
