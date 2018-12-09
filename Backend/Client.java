@@ -1,4 +1,4 @@
-package src;
+package pacman.game;
 
 import packet.PlayerProtos.*;
 import packet.TcpPacketProtos.TcpPacket.*;
@@ -24,8 +24,9 @@ public class Client extends JFrame{
     private JPanel chatPanel;
     private ChatReceiver chatReceiver;
     private ChatSender chatSender;
+    private String playerName;
 
-    public Client(String serverName, int port) {
+    public Client(String serverName, int port, String playerName) {
         this.chatPanel = new JPanel();
         this.chatPanel.setLayout(new BoxLayout(this.chatPanel, BoxLayout.Y_AXIS));
         this.chatArea = new JTextArea(200,300);
@@ -52,9 +53,11 @@ public class Client extends JFrame{
         this.setResizable(false);
         this.setVisible(true);
         
+        this.playerName = playerName;
+
         try {
             Packet packet = new Packet();
-            User user = new User(packet);
+            User user = new User(packet, this.playerName);
 
             do{
                 System.out.println("Connecting to " + serverName + " on port " + port);
