@@ -17,20 +17,38 @@ public class Board implements Constants{
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				if(this.boardLayout[i][j] == DOT || this.boardLayout[i][j] == BIGDOT)	this.totalNumberOfDots++;
 	}
+	
 	public String[][] getBoardLayout(){
 		return this.boardLayout;
+	}
+	public void updateBoardLayout(int x, int y, int prevX, int prevY, int player){
+		if(player == 1){
+			this.boardLayout[y][x] = PACMAN;
+				this.boardLayout[prevY][prevX] = EMPTY;
+		}
+		else {
+			if(this.boardLayout[y][x] == DOT || this.boardLayout[y][x] == BIGDOT) this.boardLayout[y][x] = GHOST_WITH_DOT;
+			else this.boardLayout[y][x] = GHOST;
+			if(this.boardLayout[prevY][prevX] ==  GHOST_WITH_DOT){
+				this.boardLayout[prevY][prevX] = DOT;
+				// BIG DOT TO BE ADDED!!
+			}	
+			else	this.boardLayout[prevY][prevX] = EMPTY;
+		}
+
+
 	}
 	public int getPacmanXPos(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
-				if(boardLayout[i][j].equals(PACMAN))	return j;
+				if(boardLayout[i][j].equals(PACMAN) || boardLayout[i][j].equals(BIGPACMAN))	return j;
 		return -1;
 	}
 
 	public int getPacmanYPos(){
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
-				if(boardLayout[i][j].equals(PACMAN))	return i;
+				if(boardLayout[i][j].equals(PACMAN) || boardLayout[i][j].equals(BIGPACMAN))	return i;
 		return -1;
 	}
 
@@ -133,6 +151,7 @@ public class Board implements Constants{
 		}
 		return nextPos;
 	}
+	
 	public boolean checkMoveIfValid(Ghost ghost, char move){
 		int ghostX = ghost.getXPos();
 		int ghostY = ghost.getYPos();

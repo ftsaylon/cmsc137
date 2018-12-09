@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import packet.PlayerProtos.Player;
+// import packet.PlayerProtos.Player;
+import packet.UdpPacketProtos.UdpPacket.*;
 
 public class PacmanServer implements Runnable, Constants{
 	UDPPacket udp_packet;
@@ -40,22 +41,27 @@ public class PacmanServer implements Runnable, Constants{
 	// The main game thread
 	Thread t = new Thread(this);
 	
+	Player player = null;
+
 	public PacmanServer(int numPlayers){
 		this.numPlayers = numPlayers;
 		this.udp_packet = new UDPPacket();
 
 		try{
-            serverSocket = new DatagramSocket(PORT);
+            this.serverSocket = new DatagramSocket(PORT);
 			// serverSocket.setSoTimeout(10000);
+			this.udp_packet.setSocket(this.serverSocket);
 
 			System.out.println("Now listening on port: " + PORT);
 		}catch (IOException e) {
             System.err.println("Could not listen on port: " + PORT);
             System.exit(-1);
-		}catch(Exception e){}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		//Create the game state
-		game = new GameState();
+		game = udp_packet.createGameState(player);
 		
 		System.out.println("Game created...");
 		
@@ -65,33 +71,70 @@ public class PacmanServer implements Runnable, Constants{
 
 
 	public void run(){
-		try{
-			Player playerPacketOld = null;
-			byte[] buf = null;
-			while(true){
-				// Get the data from players
-				this.udp_packet.setSocket(this.serverSocket);
-				buf = this.udp_packet.receive();
-				Player playerPacket = Player.parseFrom(buf);
-				
-				if(playerPacketOld == null){
+		Player playerPacketOld = null;
+		Player playerPacket = null;
+		byte[] buf = null;
+
+		while(true){
+			// Receive Player Packet from Client
+			buf = this.udp_packet.receive();
+			playerPacket = this.udp_packet.parseToPlayer(buf);
+			
+			switch(this.gameStage){
+				case WAITING_FOR_PLAYERS:
+					if(playerPacketOld == null){ // Check if first player
+						playerPacketOld = playerPacket;
+
+						this.game = udp_packet.createGameState(playerPacket); // Create game state
+						System.out.println("Number of players: " + this.game.getPlayerListCount());
+						System.out.println(playerPacket.getName() + " joined the game");	
+						this.playerCount++;
+
+					}else if(playerPacket.getCharacter().getId() != playerPacketOld.getCharacter().getId()){
+						this.game = this.game.toBuilder().addPlayerList(playerPacket).build(); // Add to player list in Game Packet
+						System.out.println("Number of players: " + this.game.getPlayerListCount());
+						System.out.println(playerPacket.getName() + " joined the game");
+						this.playerCount++;
+					}else continue;
+
 					playerPacketOld = playerPacket;
-					// System.out.println(playerPacket);
-				}else if(playerPacket.getCharacter().getXPos() != playerPacketOld.getCharacter().getXPos() || playerPacket.getCharacter().getYPos() != playerPacketOld.getCharacter().getYPos()){
-					System.out.println(playerPacket);
-				}
-				
-				playerPacketOld = playerPacket;
+
+					if(numPlayers==playerCount){
+						this.gameStage=GAME_START;
+						// broadcast(this.game.toByteArray());
+					}
+					break;
+					
+				case GAME_START:
+					System.out.println("Game is starting...");
+					this.gameStage=IN_PROGRESS;
+					// broadcast(this.game.toByteArray());
+					break;
+
+				case IN_PROGRESS:
+					System.out.println("Game is in progress...");
+					Integer index = 0;
+					this.game = this.game.toBuilder().setPlayerList(playerPacket.getId()-1, playerPacket).build();
+					
+					System.out.println(this.game.getPlayerListList());
+					broadcast(this.game.toByteArray());
+					break;
 			}
-		}catch(Exception ioe){
-			ioe.printStackTrace();
+
 		}
-	
+	}
+
+	public void broadcast(byte[] buf){
+		Iterator iter = this.game.getPlayerListList().iterator();
+		while(iter.hasNext()){
+			Player player = (Player) iter.next();
+			this.udp_packet.sendToClient(player, buf);
+		}
 	}
 
 	public static void main(String[] args){
 		if (args.length != 1){
-			System.out.println("Usage: java PacmanServer <number of players>");
+			System.out.println("Usage: java pacman.game.PacmanServer <number of players>");
 			System.exit(1);
 		}
 

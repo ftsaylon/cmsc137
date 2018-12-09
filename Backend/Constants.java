@@ -43,4 +43,7 @@ public interface Constants {
 	public static final String GHOST_WITH_DOT = "G";
 	public static final String BLACK_GHOST = "b";
 	public static final String BLACK_GHOST_WITH_DOT = "B";
+
+	
+
 }
