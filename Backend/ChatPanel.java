@@ -25,7 +25,13 @@ public class ChatPanel extends JPanel{
     private JLabel senderName;
     private ChatReceiver chatReceiver;
     private ChatSender chatSender;
+    private Boolean startChat;
+    private Socket server;
+    
     private User user;
+    private Packet packet;
+    private String player_name;
+
 	public ChatPanel(String player_name, String serverName, int port, boolean is_pacman){
 		this.name = name;
 		// this.lobbyId = lobbyId;
@@ -49,52 +55,37 @@ public class ChatPanel extends JPanel{
         this.add(sendButton);
         this.sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         
+        this.player_name = player_name;
+
 		 try {
-            Packet packet = new Packet();
-            // this.player = packet.createPlayer(player_name);
-            User user = new User(packet, player_name);
-
+            this.packet = new Packet();
+            this.user = new User(packet, player_name);
            
-                System.out.println("Connecting to " + serverName + " on port " + port);
-                
-                Socket server = new Socket(serverName, port);
-
-                System.out.println("\nConnected to " + server.getRemoteSocketAddress());
-                packet.setSocket(server);
-
-                if(is_pacman){
-                	CreateLobbyPacket createLobby = packet.createLobby(5);
-		            packet.send(createLobby.toByteArray());
-		            CreateLobbyPacket lobby = CreateLobbyPacket.parseFrom(packet.receive()); 
-		            lobbyId = lobby.getLobbyId();
-		            System.out.println("Lobby id: "+ lobbyId);
-                }
-                else{
-                	System.out.print("Enter Lobby ID: ");
-			        Scanner str = new Scanner(System.in);
-			        lobbyId = str.nextLine();
-                }
-                ConnectPacket createConnection = packet.createConnection(user.getPlayer(), lobbyId);
-                packet.send(createConnection.toByteArray());
-                ConnectPacket connect = ConnectPacket.parseFrom(packet.receive());
-                
-                System.out.println(player_name + " has joined to the lobby.");
-
-                chatSender = new ChatSender(packet, user, lobbyId, this.sendButton, this.chatBox, this.chatArea);
-                chatReceiver = new ChatReceiver(packet, user, lobbyId, this.chatArea);
-                Thread sender = new Thread(chatSender);
-                Thread receiver = new Thread(chatReceiver);
-                this.senderName.setText(player_name);
+            System.out.println("Connecting to " + serverName + " on port " + port);
             
-                sender.start();
-                receiver.start();
-                try {
-                    sender.join();
-                    receiver.join();
-                } catch(Exception e) {};
+            this.server = new Socket(serverName, port);
 
-                server.close();
-           
+            System.out.println("\nConnected to " + server.getRemoteSocketAddress());
+            packet.setSocket(server);
+
+            if(is_pacman){
+                CreateLobbyPacket createLobby = packet.createLobby(5);
+                packet.send(createLobby.toByteArray());
+                CreateLobbyPacket lobby = CreateLobbyPacket.parseFrom(packet.receive()); 
+                lobbyId = lobby.getLobbyId();
+                System.out.println("Lobby id: "+ lobbyId);
+            }
+            else{
+                System.out.print("Enter Lobby ID: ");
+                Scanner str = new Scanner(System.in);
+                lobbyId = str.nextLine();
+            }
+            ConnectPacket createConnection = packet.createConnection(user.getPlayer(), lobbyId);
+            packet.send(createConnection.toByteArray());
+            ConnectPacket connect = ConnectPacket.parseFrom(packet.receive());
+            
+            System.out.println(player_name + " has joined to the lobby.");
+                
         }
         catch(UnknownHostException unEx) {
             unEx.printStackTrace();
@@ -102,9 +93,40 @@ public class ChatPanel extends JPanel{
         catch(IOException err) {
             err.printStackTrace();
         }
-	}
+    }
+
 	public String getLobbyId(){
 		return this.lobbyId;
-	}
+    }
+    
+    public void startChat(){
+        try{
+            this.startChat = true;
+    
+            this.chatSender = new ChatSender(this.packet, this.user, this.lobbyId, this.sendButton, this.chatBox, this.chatArea);
+            this.chatReceiver = new ChatReceiver(this.packet, this.user, this.lobbyId, this.chatArea);
+            Thread sender = new Thread(this.chatSender);
+            Thread receiver = new Thread(this.chatReceiver);
+            this.senderName.setText(this.player_name);
+            
+            sender.start();
+            receiver.start();
+            try {
+                sender.join();
+                receiver.join();
+            } catch(Exception e) {};
+            
+            this.server.close();
+
+        }
+        catch(UnknownHostException unEx) {
+            unEx.printStackTrace();
+        }
+        catch(IOException err) {
+            err.printStackTrace();
+        }
+
+    }
+    
 
 }
