@@ -1,4 +1,4 @@
-package src;
+package pacman.game;
 
 import packet.PlayerProtos.*;
 import packet.TcpPacketProtos.TcpPacket.*;
@@ -10,6 +10,7 @@ import javax.swing.JTextArea;
 public class ChatReceiver implements Runnable {
     private Packet packet;
     private User user;
+    // private Player player;
     private String lobbyId;
     private Boolean connected;
     private JTextArea chatArea;

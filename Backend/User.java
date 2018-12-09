@@ -1,4 +1,4 @@
-package src;
+package pacman.game;
 
 import packet.PlayerProtos.*;
 import packet.TcpPacketProtos;
@@ -13,10 +13,8 @@ import java.net.UnknownHostException;
 class User {
     private Player player;
 
-    public User(Packet packet) {
-        System.out.print("Enter Name: ");
-        Scanner str = new Scanner(System.in);
-        String name = str.nextLine();
+    public User(Packet packet, String name) {
+    
         this.player = packet.createPlayer(name);
     }
 
