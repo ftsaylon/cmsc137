@@ -72,26 +72,25 @@ class UDPPacket implements Constants {
         return gameState;
     }
 
-    GameState addPlayerToGame(GameState gameState1, Player player){
-        GameState gameState2 = null;
-        if(player != null){
-            gameState2 = 
-                GameState.newBuilder()
-                    .setType(gameState1.getType())
-                    .addPlayerList(player)
-                    .mergeFrom(gameState1)
-                    .build();
+    Player parseToPlayer(byte[] buf){
+        Player playerPacket = null;
+        try{
+            playerPacket = Player.parseFrom(buf);
+        }catch(Exception ioe){
+            ioe.printStackTrace();
         }
-        return gameState2;
+        return playerPacket;
     }
 
-    // GameState updatePlayer(GameState gameState1, Player player){
-    //     GameState gameState2 = null;
-    //     if(player != null){
-    //         gameState2 = 
-    //     }
-    // }
-
+    GameState parseToGameState(byte[] buf){
+        GameState gameState = null;
+        try{
+            gameState = GameState.parseFrom(buf);
+        }catch(Exception ioe){
+            ioe.printStackTrace();
+        }
+        return gameState;
+    }
 
     void send(byte[] buf) {
         try {

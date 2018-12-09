@@ -48,14 +48,17 @@ public class PacmanServer implements Runnable, Constants{
 		this.udp_packet = new UDPPacket();
 
 		try{
-            serverSocket = new DatagramSocket(PORT);
+            this.serverSocket = new DatagramSocket(PORT);
 			// serverSocket.setSoTimeout(10000);
+			this.udp_packet.setSocket(this.serverSocket);
 
 			System.out.println("Now listening on port: " + PORT);
 		}catch (IOException e) {
             System.err.println("Could not listen on port: " + PORT);
             System.exit(-1);
-		}catch(Exception e){}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		
 		//Create the game state
 		game = udp_packet.createGameState(player);
@@ -71,36 +74,24 @@ public class PacmanServer implements Runnable, Constants{
 		Player playerPacketOld = null;
 		Player playerPacket = null;
 		byte[] buf = null;
-		try{
-			// Get the data from players
-			this.udp_packet.setSocket(this.serverSocket);
-		}catch(Exception ioe){
-			ioe.printStackTrace();
-		}
 
 		while(true){
-			
+			// Receive Player Packet from Client
 			buf = this.udp_packet.receive();
-			try{
-				// Get the data from players
-				playerPacket = Player.parseFrom(buf);
-			}catch(Exception ioe){
-				ioe.printStackTrace();
-			}
-	
-			switch(gameStage){
+			playerPacket = this.udp_packet.parseToPlayer(buf);
+			
+			switch(this.gameStage){
 				case WAITING_FOR_PLAYERS:
-
-					if(playerPacketOld == null){
+					if(playerPacketOld == null){ // Check if first player
 						playerPacketOld = playerPacket;
 
-						this.game = udp_packet.createGameState(playerPacket);
+						this.game = udp_packet.createGameState(playerPacket); // Create game state
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");	
 						this.playerCount++;
 
-					}else if(playerPacket.getCharacter().getName() != playerPacketOld.getCharacter().getName()){
-						this.game = udp_packet.addPlayerToGame(this.game, playerPacket);
+					}else if(playerPacket.getCharacter().getId() != playerPacketOld.getCharacter().getId()){
+						this.game = this.game.toBuilder().addPlayerList(playerPacket).build(); // Add to player list in Game Packet
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");
 						this.playerCount++;
@@ -109,32 +100,35 @@ public class PacmanServer implements Runnable, Constants{
 					playerPacketOld = playerPacket;
 
 					if(numPlayers==playerCount){
-						gameStage=GAME_START;
+						this.gameStage=GAME_START;
+						// broadcast(this.game.toByteArray());
 					}
-					
 					break;
 					
 				case GAME_START:
 					System.out.println("Game is starting...");
-					gameStage=IN_PROGRESS;
-					
+					this.gameStage=IN_PROGRESS;
+					// broadcast(this.game.toByteArray());
 					break;
 
 				case IN_PROGRESS:
-					System.out.println("Game is in progress");
+					System.out.println("Game is in progress...");
 					Integer index = 0;
 					this.game = this.game.toBuilder().setPlayerList(playerPacket.getId()-1, playerPacket).build();
 					
 					System.out.println(this.game.getPlayerListList());
-					Iterator iter = this.game.getPlayerListList().iterator();
-						while(iter.hasNext()){
-							Player player = (Player) iter.next();
-							this.udp_packet.sendToClient(player, this.game.toByteArray());
-						}
+					broadcast(this.game.toByteArray());
 					break;
 			}
 
-			
+		}
+	}
+
+	public void broadcast(byte[] buf){
+		Iterator iter = this.game.getPlayerListList().iterator();
+		while(iter.hasNext()){
+			Player player = (Player) iter.next();
+			this.udp_packet.sendToClient(player, buf);
 		}
 	}
 
