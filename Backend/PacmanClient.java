@@ -2,6 +2,8 @@ package pacman.game;
 
 // import packet.PlayerProtos.Player;
 // import packet.CharacterProtos.Character;
+import packet.PlayerProtos.*;
+import packet.TcpPacketProtos.TcpPacket.*;
 import packet.UdpPacketProtos.UdpPacket.Player;
 import packet.UdpPacketProtos.UdpPacket.Character;
 import packet.UdpPacketProtos.UdpPacket.GameState;
@@ -24,11 +26,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private String move;
 	private Map map;
 	private HashMap<Ghost, String> ghosts;
+	// private ChatPanel chatPanel;
+	// private JPanel boardPanel;
 	static final int NOT_OVER = 0;
-	private static int numberOfPlayers = 0;
+	// private static int numberOfPlayers = 0;
 
 	private int id;
-	private int clientPort;
+	private int clientPort, port;
 
 	List<Player> players;
 
@@ -44,6 +48,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private boolean is_pacman;
 	private boolean is_ghost;
 	private String color;
+	private String lobbyId;
+	// private static final String lobbyId = "CHAT";
 	public PacmanClient(String server_ip, String player_name, Integer clientPort, Integer id){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
@@ -53,16 +59,19 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.gameOver = false;
 		this.is_connected = false;
 		this.move = "";
-		PacmanClient.numberOfPlayers ++;
+		// PacmanClient.numberOfPlayers ++;
 
 		this.clientPort = clientPort; // Port of this client
 		this.id = id;
+		this.port = 80;
 		this.players = new ArrayList<Player>(); // Holds the players
-
+		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
+    
 		if(this.id == 1 || id == 2 || id == 3)	{ // ASSUMED FIRST THAT ID 1 and 2 are PACMANS
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
+
 		}
 		// else ghost
 		else{
@@ -84,20 +93,27 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			}
 		}
-
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+		// if(this.id == 1) setChatServer();
+		// else {
+
+		// }
 
 		// this.players.add(playerPacket); // Add instance of player to list of players
 
 		this.players.add(this.playerPacket);
 
 		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
+		
+		// this.boardPanel.setPreferredSize(new Dimension(775, 700));
+		this.setLayout(new GridLayout(31, 28));
+		
+		// this.add(chatPanel, BorderLayout.WEST);
 		this.setFocusable(true);
 		this.addKeyListener(this);
 		setOpaque(true);
 		setBackground(Color.BLACK);
-		setLayout(new GridLayout(31, 28));
 		setBoard(board.getBoardLayout());
 		setBoardUI();
 		revalidate();
@@ -115,6 +131,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 		// Start Client thread
 		t.start();
+
+		// Send playerPacket upon initialization of client
+		udp_packet.send(this.playerPacket.toByteArray());
 
 	}
 
@@ -278,7 +297,86 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	
 	public void keyReleased(KeyEvent ke){	
 	}
+	public void setChatServer(){
+		// JPanel chatPanel = new JPanel();
+  //       chatPanel.setLayout(new BoxLayout(chatPanel, BoxLayout.Y_AXIS));
+  //       JTextArea chatArea = new JTextArea(200,300);
+  //       chatArea.setEditable(false);
+  //       chatArea.setLineWrap(true);
+  //       JButton sendButton = new JButton("Send");
+  //       JTextField chatBox = new JTextField();
+  //       chatBox.setPreferredSize(new Dimension(200, 100));
+  //       // sendButton.addActionListener(new sendButtonListener());
+  //       JLabel senderName = new JLabel();
+  //       chatPanel.add(senderName);
+  //       senderName.setAlignmentX(Component.CENTER_ALIGNMENT);
+  //       chatPanel.add(chatArea);
+  //       chatArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+  //       chatPanel.add(chatBox);
+  //       chatBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+  //       chatPanel.add(sendButton);
+  //       sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+  //       this.add(chatPanel, BorderLayout.WEST);
+        // add(chatPanel, Bo);
+       //  try {
+       //      Packet packet = new Packet();
+       //      // packet.createPlayer(player_name);
+       //      User user = new User(packet, player_name);
 
+            
+       //      System.out.println("Connecting to " + "202.92.144.45" + " on port " + port);
+                
+     		// Socket server = new Socket("202.92.144.45", port);
+
+       //      System.out.println("\nConnected to " + server.getRemoteSocketAddress());
+       //      packet.setSocket(server);
+
+      	// 	CreateLobbyPacket createLobby = packet.createLobby(5);
+       //      packet.send(createLobby.toByteArray());
+       //      CreateLobbyPacket lobby = CreateLobbyPacket.parseFrom(packet.receive()); 
+       //      lobbyId = lobby.getLobbyId();
+
+       //      ConnectPacket createConnection = packet.createConnection(user.getPlayer(), lobbyId);
+       //      packet.send(createConnection.toByteArray());
+       //      ConnectPacket connect = ConnectPacket.parseFrom(packet.receive());
+       //      user.setPlayer(connect.getPlayer());
+       //      System.out.println(user.getPlayer().getName() + " has joined to the lobby.");
+
+       //      ChatSender chatSender = new ChatSender(packet, user, lobbyId, sendButton, chatBox, chatArea);
+       //      ChatReceiver chatReceiver = new ChatReceiver(packet, user, lobbyId, chatArea);
+       //      Thread sender = new Thread(chatSender);
+       //      Thread receiver = new Thread(chatReceiver);
+       //      senderName.setText(user.getPlayer().getName());
+            
+       //          sender.start();
+       //          receiver.start();
+       //          try {
+       //              sender.join();
+       //              receiver.join();
+       //          } catch(Exception e) {};
+       //          System.out.println("YOW");
+       //          server.close();
+            
+
+       //  }
+       //  catch(UnknownHostException unEx) {
+       //      unEx.printStackTrace();
+       //  }
+       //  catch(IOException err) {
+       //      err.printStackTrace();
+       //  }
+	}
+
+	// public CreateLobbyPacket createLobbyPacket(String lobby_id, Integer max_players){
+ //        CreateLobbyPacket lobby_packet =
+ //            CreateLobbyPacket.newBuilder()
+ //            .setType(PacketType.CREATE_LOBBY)
+ //            .setLobbyId(lobby_id)
+ //            .setMaxPlayers(max_players)
+ //            .build();
+
+ //        return lobby_packet;
+ //    }
 	public void run(){
 		byte[] buf = null;
 		
@@ -311,7 +409,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	public static void main(String[] args){
 		JFrame pacmanFrame = new JFrame("Pacman Game " + args[1]);
-		
+		JFrame chatFrame  = new JFrame("Chat Frame");
 		try{
 			String serverName = args[0];
 			String playerName = args[1];
@@ -320,13 +418,23 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			System.out.println(args[0] + args[1] + args[2] + args[3]);
 			PacmanClient client = new PacmanClient(serverName, playerName, clientPort, id);
-			
+			boolean is_pacman;
+			if(id == 1) is_pacman = true;
+			else is_pacman = false;	
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			pacmanFrame.setPreferredSize(new Dimension(775, 700));
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
+
+			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
+			chatFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			chatFrame.setPreferredSize(new Dimension(200, 700));
+			chatFrame.setResizable(false);
+			chatFrame.add(chatPanel);
+			chatFrame.pack();
+			chatFrame.setVisible(true);
 			
 
 			

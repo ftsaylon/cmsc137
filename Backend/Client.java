@@ -64,33 +64,33 @@ public class Client extends JFrame{
                 System.out.println("\nConnected to " + server.getRemoteSocketAddress());
                 packet.setSocket(server);
 
-                System.out.println("-------- CHAT --------");
-                System.out.println("[1] Create Lobby");
-                System.out.println("[2] Join Lobby");
-                System.out.println("[3] Exit");
-                System.out.println("----------------------");
-                System.out.print(">>> ");
+                // System.out.println("-------- CHAT --------");
+                // System.out.println("[1] Create Lobby");
+                // System.out.println("[2] Join Lobby");
+                // System.out.println("[3] Exit");
+                // System.out.println("----------------------");
+                // System.out.print(">>> ");
         
-                Scanner sc = new Scanner(System.in);
-                choice = sc.nextInt();
+                // Scanner sc = new Scanner(System.in);
+                // choice = sc.nextInt();
 
-                switch(choice){
-                    case 1:
-                        CreateLobbyPacket createLobby = packet.createLobby(4);
+                // switch(choice){
+                //     case 1:
+                        CreateLobbyPacket createLobby = packet.createLobby(5);
                         packet.send(createLobby.toByteArray());
                         CreateLobbyPacket lobby = CreateLobbyPacket.parseFrom(packet.receive());
                         lobbyId = lobby.getLobbyId();
                         System.out.println(user.getPlayer().getName() + " successfully created new lobby " + lobbyId + ".");
-                        break;
-                    case 2:
-                        System.out.print("Enter Lobby ID: ");
-                        Scanner str = new Scanner(System.in);
-                        lobbyId = str.nextLine();
-                        break;  
-                    case 3:
-                        System.exit(0);
-                        break;
-                }
+                //         break;
+                //     case 2:
+                //         System.out.print("Enter Lobby ID: ");
+                //         Scanner str = new Scanner(System.in);
+                //         lobbyId = str.nextLine();
+                //         break;  
+                //     case 3:
+                //         System.exit(0);
+                //         break;
+                // }
 
                 ConnectPacket createConnection = packet.createConnection(user.getPlayer(), lobbyId);
                 packet.send(createConnection.toByteArray());
@@ -121,6 +121,16 @@ public class Client extends JFrame{
             err.printStackTrace();
         }
     }
+    // public createLobbyPacket(String lobby_id, Integer max_players){
+    //     CreateLobbyPacket lobby_packet =
+    //         CreateLobbyPacket.newBuilder()
+    //         .setType(PacketType.CREATELOBBYPACKET)
+    //         .setLobbyId(lobby_id)
+    //         .setMaxPlayers(max_players)
+    //         .build();
+
+    //     return lobby_packet;
+    // }
    
     // class sendButtonListener implements ActionListener {
     //     public void actionPerformed(ActionEvent event) {

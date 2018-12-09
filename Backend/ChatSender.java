@@ -1,4 +1,4 @@
-package src;
+package pacman.game;
 
 import packet.PlayerProtos.*;
 import packet.TcpPacketProtos.TcpPacket.*;
@@ -11,6 +11,7 @@ import java.awt.event.*;
 
 public class ChatSender implements Runnable {
     private Packet packet;
+    // private Player player;;
     private User user;
     private String lobbyId;
     private Boolean connected;
@@ -20,7 +21,8 @@ public class ChatSender implements Runnable {
     private JTextArea chatArea;
     public ChatSender(Packet packet, User user, String lobbyId, JButton sendButton, JTextField chatBox, JTextArea chatArea) {
         this.packet = packet;
-        this.user = user;
+        // this.player = player;
+        this.user =user;
         this.lobbyId = lobbyId;
         this.connected = true;
         this.chatBox = chatBox;
@@ -52,7 +54,7 @@ public class ChatSender implements Runnable {
                         connected = false;
                     }
                     chatBox.setText("");
-                    chatArea.append( user.getPlayer().getName() + " :  " + chatBox.getText() + "\n");
+                    chatArea.append(user.getPlayer().getName() + " :  " + chatBox.getText() + "\n");
                 }
                 
             }

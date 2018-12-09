@@ -1,4 +1,4 @@
-package src;
+package pacman.game;
 
 import packet.PlayerProtos.*;
 import packet.TcpPacketProtos.TcpPacket.*;
