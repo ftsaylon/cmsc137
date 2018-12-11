@@ -50,7 +50,7 @@ class UDPPacket implements Constants {
                 .setName(playerName)
                 .setId(character.getId())
                 .setCharacter(character)
-                .setIpAddress(InetAddress.getLocalHost().toString())
+                .setIpAddress(IPAddress)
                 .setPort(clientPort)
                 .build();
         
@@ -138,6 +138,7 @@ class UDPPacket implements Constants {
 
     void sendToClient(Player player, byte[] buf) {
         try {
+            // System.out.println(InetAddress.getByName(player.getIpAddress()));
             DatagramPacket datagramPacket = new DatagramPacket(
                 buf, 
                 buf.length,

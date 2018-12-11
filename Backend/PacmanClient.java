@@ -96,7 +96,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 		
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
-		this.playerPacket = udp_packet.createPlayer(player_name, this.server_ip, this.characterPacket, this.clientPort);
+		this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
 		// if(this.id == 1) setChatServer();
 		// else {
 
@@ -288,7 +288,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 		// Update Packets to be sent to server whenever there's movement
 		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
-		this.playerPacket = udp_packet.createPlayer(player_name, this.server_ip, this.characterPacket, this.clientPort);
+		this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
 		
 		try {
 			udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getByName(this.server_ip));	
@@ -424,12 +424,13 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
 			Integer id = Integer.parseInt(args[3]);
-			String ip_address = null;			
-			try {
-				ip_address = InetAddress.getLocalHost().toString();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			String ip_address = args[4];
+			// String ip_address = null;			
+			// try {
+			// 	ip_address = Inet6Address.getLocalHost().toString();
+			// } catch (Exception e) {
+			// 	e.printStackTrace();
+			// }
 
 			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
