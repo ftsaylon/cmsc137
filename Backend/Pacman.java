@@ -47,10 +47,10 @@ public class Pacman implements Constants{
 			currBoard.movePacman(LEFT);
 		}
 		String next = currBoard.checkNextPos(LEFT);
-		if(next == DOT){
+		if(next.equals(DOT)){
 			this.score += 20;
 		}
-		else if (next == BIGDOT){
+		else if (next.equals(BIGDOT)){
 			this.score += 50;
 			this.size = BIG_PACMAN;
 		}
@@ -65,15 +65,19 @@ public class Pacman implements Constants{
 			this.xPos++;
 		}
 		String next = currBoard.checkNextPos(RIGHT);
-		if(next == DOT){
+		if(next.equals(DOT)){
 			this.score += 20;
 		}
-		else if (next == BIGDOT){
+		else if (next.equals(BIGDOT)){
 			this.score += 50;
 			this.size = BIG_PACMAN;
 		}
 	}
-
+	public void dead(){
+		this.lives--;
+		this.xPos = this.game.getGameBoard().getPacmanX();
+		this.yPos = this.game.getGameBoard().getPacmanY();
+	}
 	public void moveUp(){
 		this.prevXPos = this.xPos;
 		this.prevYPos = this.yPos;
@@ -83,10 +87,10 @@ public class Pacman implements Constants{
 			this.yPos--;
 		}
 		String next = currBoard.checkNextPos(UP);
-		if(next == DOT){
+		if(next.equals(DOT)){
 			this.score += 20;
 		}
-		else if (next == BIGDOT){
+		else if (next.equals(BIGDOT)){
 			this.score += 50;
 			this.size = BIG_PACMAN;
 		}
@@ -101,10 +105,10 @@ public class Pacman implements Constants{
 			this.yPos++;
 		}
 		String next = currBoard.checkNextPos(DOWN);
-		if(next == DOT){
+		if(next.equals(DOT)){
 			this.score += 20;
 		}
-		else if (next == BIGDOT){
+		else if (next.equals(BIGDOT)){
 			this.score += 50;
 			this.size = BIG_PACMAN;
 		}

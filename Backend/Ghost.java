@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class Ghost{
+public class Ghost implements Constants{
 	private String name;
 	private int xPos, yPos, prevXPos, prevYPos;
 	private String color;
@@ -66,8 +66,23 @@ public class Ghost{
 			this.xPos++;
 		}
 	}
-	public boolean checkIfCanEatPacman(){
-		return true;
+	public boolean canEatPacman(String move){
+		Board board = this.game.getGameBoard();
+		int x = board.getPacmanXPos();
+		int y = board.getPacmanYPos();
+		
+		if(x == this.xPos){
+			if(move == MOVE_UP)
+				if(this.yPos - 1 == y) return true;
+			else if(move == MOVE_DOWN)
+				if(this.yPos + 1 == y) return true;
+		}else if(y == this.yPos){
+			if(move == MOVE_RIGHT)
+				if(this.xPos + 1 == x) return true;
+			else if(move == MOVE_LEFT)
+				if(this.xPos - 1 == x) return true;
+		}	
+		return false;
 	}
 	// getters
 	public int getXPos(){
