@@ -67,7 +67,7 @@ public class Ghost{
 		}
 	}
 	public boolean checkIfCanEatPacman(){
-
+		return true;
 	}
 	// getters
 	public int getXPos(){

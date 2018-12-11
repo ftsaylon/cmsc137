@@ -128,6 +128,7 @@ public class PacmanServer implements Runnable, Constants{
 		Iterator iter = this.game.getPlayerListList().iterator();
 		while(iter.hasNext()){
 			Player player = (Player) iter.next();
+			System.out.println(player.getCharacter().getName() + player.getIpAddress());
 			this.udp_packet.sendToClient(player, buf);
 		}
 	}

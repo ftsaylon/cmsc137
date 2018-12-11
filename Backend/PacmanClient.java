@@ -49,7 +49,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private String color;
 	private String lobbyId;
 	// private static final String lobbyId = "CHAT";
-	public PacmanClient(String server_ip, String player_name, Integer clientPort, Integer id){
+	public PacmanClient(String server_ip, String ip_address, String player_name, Integer clientPort, Integer id){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.map = new Map(3);
@@ -205,7 +205,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			
 			if(prevYPos != yPos || prevXPos != xPos){
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
-				this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("empty"));
+				this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
 			}
 			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
 			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
@@ -363,9 +363,19 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
 			Integer id = Integer.parseInt(args[3]);
+			String ip_address = args[4];
+			// String ip_address = null;			
+			// try {
+			// 	ip_address = Inet6Address.getLocalHost().toString();
+			// } catch (Exception e) {
+			// 	e.printStackTrace();
+			// }
 
-			System.out.println(args[0] + args[1] + args[2] + args[3]);
-			PacmanClient client = new PacmanClient(serverName, playerName, clientPort, id);
+			// System.out.println(args[0] + args[1] + args[2] + args[3]);
+
+			System.out.println("Connecting to server at " + args[0] + "...");
+			System.out.println("MY IP: " + args[4]);
+			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
@@ -379,6 +389,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.add(chatPanel, BorderLayout.WEST);
 			pacmanFrame.revalidate();
 			chatPanel.startChat();
+			// System.out.println("CREATE CHAT ");
+			
+			// chatPanel.startChat();
 
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
