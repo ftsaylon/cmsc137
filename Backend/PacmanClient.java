@@ -235,18 +235,18 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					case OUT:
 						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("empty"));
 						break;
-					case BLINKY:
-						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-						break;
-					case SPEEDY:
-						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-						break;
-					case INKY:
-						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-						break;
-					case CLYDE:
-						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-						break;
+					// case BLINKY:
+					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+					// 	break;
+					// case SPEEDY:
+					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+					// 	break;
+					// case INKY:
+					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+					// 	break;
+					// case CLYDE:
+					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+					// 	break;
 					case PACMAN:
 						if(move=="")this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pacRIGHT"));
 						else this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pac"+move));
