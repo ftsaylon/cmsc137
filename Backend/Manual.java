@@ -1,7 +1,3 @@
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
@@ -31,6 +27,7 @@ public class Manual extends JPanel{
 		JLabel subPanel3 = new JLabel(helpIcon);
 		JLabel subPanel4 = new JLabel(bgIcon);
 		JLabel manPanel = new JLabel(manIcon);
+
 
 		manPanel.setVisible(false);
 
