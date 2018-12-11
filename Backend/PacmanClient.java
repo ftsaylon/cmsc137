@@ -74,7 +74,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			// this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
-			this.color = "pacman";
+			this.color = "pac";
 			this.characterPacket = udp_packet.createCharacter(player_name, color, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		}
 		// else ghost
@@ -212,10 +212,11 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			if(prevYPos != yPos || prevXPos != xPos){
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
 				this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
+				// updateBoardLayout(xPos, yPos, prevXPos, prevYPos, 1);
 			}
-			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
-			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
-			updateBoardLayout(xPos, yPos, prevXPos, prevYPos, 1);
+			// if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
+			// else 
+			this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
 		}
 		else {
 			yPos = this.ghost.getYPos();
@@ -224,8 +225,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			prevXPos = this.ghost.getPrevXPos();
 			
 			if(!(prevYPos == yPos && prevXPos == xPos)){
+				if(this.board.isGhostWithADot(prevXPos, prevYPos))	this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("smalldot"));
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
-				updateBoardLayout(xPos, yPos, prevXPos, prevYPos, 2);
 			}
 			this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage(color+move));
 			
@@ -315,7 +316,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			else this.ghost.moveRight();
 			move = MOVE_RIGHT;
 		}
-
+		printBoard();
+		System.out.println(this.board.getPacmanXPos()+ " "+ this.board.getPacmanYPos());
 		// Update Packets to be sent to server whenever there's movement
 		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
 		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos());
