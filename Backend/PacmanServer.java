@@ -80,23 +80,24 @@ public class PacmanServer implements Runnable, Constants{
 			buf = this.udp_packet.receive();
 			playerPacket = this.udp_packet.parseToPlayer(buf);
 			
+			
 			switch(this.gameStage){
 				case WAITING_FOR_PLAYERS:
-					if(playerPacketOld == null){ // Check if first player
-						playerPacketOld = playerPacket;
-
-						this.game = udp_packet.createGameState(playerPacket); // Create game state
-						System.out.println("Number of players: " + this.game.getPlayerListCount());
+				if(playerPacketOld == null){ // Check if first player
+					playerPacketOld = playerPacket;
+					
+					this.game = udp_packet.createGameState(playerPacket); // Create game state
+					System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");	
 						this.playerCount++;
-
+						
 					}else if(playerPacket.getCharacter().getId() != playerPacketOld.getCharacter().getId()){
 						this.game = this.game.toBuilder().addPlayerList(playerPacket).build(); // Add to player list in Game Packet
 						System.out.println("Number of players: " + this.game.getPlayerListCount());
 						System.out.println(playerPacket.getName() + " joined the game");
 						this.playerCount++;
 					}else continue;
-
+					
 					playerPacketOld = playerPacket;
 
 					if(numPlayers==playerCount){
@@ -128,6 +129,7 @@ public class PacmanServer implements Runnable, Constants{
 		Iterator iter = this.game.getPlayerListList().iterator();
 		while(iter.hasNext()){
 			Player player = (Player) iter.next();
+			System.out.println(player.getCharacter().getName() + player.getIpAddress());
 			this.udp_packet.sendToClient(player, buf);
 		}
 	}
@@ -140,5 +142,12 @@ public class PacmanServer implements Runnable, Constants{
 
 		new PacmanServer(Integer.parseInt(args[0]));
 
+	}
+
+	public void giveId(Player playerPacket){
+		System.out.println(playerPacket);
+		if(playerPacket.getCharacter().getId() == -1){
+			this.udp_packet.sendToClient(playerPacket, (Integer.toString(playerCount)).getBytes());
+		}
 	}
 }

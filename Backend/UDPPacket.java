@@ -42,19 +42,26 @@ class UDPPacket implements Constants {
         return character;
     }
 
-    Player createPlayer(String playerName, Character character, Integer clientPort){
-        Player player = 
+    Player createPlayer(String playerName, String IPAddress, Character character, Integer clientPort){
+        Player player = null;
+        try{
+            player = 
             Player.newBuilder()
                 .setType(PacketType.PLAYER)
                 .setName(playerName)
                 .setId(character.getId())
                 .setCharacter(character)
+                .setIpAddress(IPAddress)
                 .setPort(clientPort)
                 .build();
         
+                
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return player;
     }
-
+    
     GameState createGameState(Player player){
         GameState gameState = null;
             if(player != null){
@@ -93,17 +100,15 @@ class UDPPacket implements Constants {
         return gameState;
     }
 
-    void send(byte[] buf) {
+    void send(byte[] buf, InetAddress ip) {
         try {
             DatagramPacket datagramPacket = new DatagramPacket(
                 buf, 
                 buf.length,
-                InetAddress.getLocalHost(),
+                ip,
                 PORT
             );
-
-            System.out.println(datagramPacket.getPort());
-
+            
             socket.send(datagramPacket);
             
         } catch (SocketException e) {
@@ -132,10 +137,11 @@ class UDPPacket implements Constants {
 
     void sendToClient(Player player, byte[] buf) {
         try {
+            // System.out.println(InetAddress.getByName(player.getIpAddress()));
             DatagramPacket datagramPacket = new DatagramPacket(
                 buf, 
                 buf.length,
-                InetAddress.getLocalHost(),
+                InetAddress.getByName(player.getIpAddress()),
                 player.getPort()
             );
 
