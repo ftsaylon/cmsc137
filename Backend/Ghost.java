@@ -66,6 +66,9 @@ public class Ghost{
 			this.xPos++;
 		}
 	}
+	public boolean checkIfCanEatPacman(){
+
+	}
 	// getters
 	public int getXPos(){
 		return this.xPos;

@@ -30,6 +30,8 @@ public class Pacman implements Constants{
 	}
 
 	public void pacmanDies(){
+		this.xPos = this.game.getGameBoard().getPacmanX();
+		this.yPos = this.game.getGameBoard().getPacmanY();
 		this.game.pacmanRespawn();
 	}
 

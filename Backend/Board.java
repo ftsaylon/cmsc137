@@ -9,27 +9,43 @@ public class Board implements Constants{
 	private String[][] boardLayout;
 	private int totalNumberOfDots;
 	private ArrayList<Ghost> ghosts;
-
+	private int pacmanX, pacmanY;
 	public Board(Map map){
 		this.boardLayout = map.getBoardLayout();
 		this.totalNumberOfDots = 0;
-		for(int i = 0; i < BOARD_LENGTH; i++)
-			for(int j = 0; j < BOARD_WIDTH; j++)
-				if(this.boardLayout[i][j] == DOT || this.boardLayout[i][j] == BIGDOT)	this.totalNumberOfDots++;
+		for(int i = 0; i < BOARD_LENGTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				if(this.boardLayout[i][j].equals(PACMAN)){
+					this.pacmanX = j;
+					this.pacmanY = i;
+				}
+				if(this.boardLayout[i][j].equals(DOT) || this.boardLayout[i][j].equals(BIGDOT))	this.totalNumberOfDots++;
+			}
+		}
 	}
-	
+	public void decrementNumberOfDots(){
+		this.totalNumberOfDots--;
+	}
+	public boolean isDot(int x, int y){
+		if(this.boardLayout[y][x].equals(DOT) || this.boardLayout[y][x].equals(BIGDOT))	return true;
+		return false;
+	}
 	public String[][] getBoardLayout(){
 		return this.boardLayout;
 	}
 	public void updateBoardLayout(int x, int y, int prevX, int prevY, int player){
 		if(player == 1){
 			this.boardLayout[y][x] = PACMAN;
-				this.boardLayout[prevY][prevX] = EMPTY;
+			this.boardLayout[prevY][prevX] = EMPTY;
 		}
 		else {
-			if(this.boardLayout[y][x] == DOT || this.boardLayout[y][x] == BIGDOT) this.boardLayout[y][x] = GHOST_WITH_DOT;
+			System.out.println("LOL");
+		if(isDot(x, y)) {
+			this.boardLayout[y][x] = GHOST_WITH_DOT;
+			System.out.println("LMAO");
+		}
 			else this.boardLayout[y][x] = GHOST;
-			if(this.boardLayout[prevY][prevX] ==  GHOST_WITH_DOT){
+			if(this.boardLayout[prevY][prevX].equals(GHOST_WITH_DOT)){
 				this.boardLayout[prevY][prevX] = DOT;
 				// BIG DOT TO BE ADDED!!
 			}	
@@ -202,5 +218,10 @@ public class Board implements Constants{
 		}
 		return -1;
 	}
-
+	public int getPacmanX(){
+		return this.pacmanX;
+	}
+	public int getPacmanY(){
+		return this.pacmanY;
+	}
 }

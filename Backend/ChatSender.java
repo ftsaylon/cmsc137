@@ -41,7 +41,6 @@ public class ChatSender implements Runnable {
         this.chatBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 String message = chatBox.getText();
-
                 if (message != null && message.trim().length() > 0){
                     ChatPacket createMessage = packet.createMessage(message, user.getPlayer(), lobbyId);
                     packet.send(createMessage.toByteArray());

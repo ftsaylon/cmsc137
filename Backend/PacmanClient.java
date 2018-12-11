@@ -180,15 +180,17 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		int prevYPos = lpChar.getPrevYPos();
 		int prevXPos = lpChar.getPrevXPos();
 		if(!(lpChar.getName().equals(this.player_name))){
-			// String mov = 
+
 			this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage(lpChar.getColor()+getMove(xPos, yPos, prevXPos, prevYPos)));
 			this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
 			if(lpChar.getId()==1){
-				if(prevXPos != xPos && prevYPos != yPos)
-					this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+				if(prevXPos != xPos && prevYPos != yPos){
+					if(this.board.isDot(xPos, yPos))	this.board.decrementNumberOfDots();
+						this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+				}
 
 			}
-			this.board.updateBoardLayout(lpChar.getXPos(), lpChar.getYPos(), lpChar.getPrevXPos(), lpChar.getPrevYPos(), lpChar.getId());
+			this.board.updateBoardLayout(xPos, yPos, prevXPos, prevYPos, lpChar.getId());
 			
 		}
 
@@ -201,11 +203,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			prevYPos = this.pacman.getPrevYPos();
 			prevXPos = this.pacman.getPrevXPos();
 			
-			if(!(prevYPos == yPos && prevXPos == xPos)){
+			if(prevYPos != yPos || prevXPos != xPos){
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+				this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("empty"));
 			}
 			if(pacman.getSize() == NORMAL_PACMAN) this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
-			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pacman"+move));
+			else this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage("pac"+move));
 			updateBoardLayout(xPos, yPos, prevXPos, prevYPos, 1);
 		}
 		else {
@@ -216,6 +219,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			
 			if(!(prevYPos == yPos && prevXPos == xPos)){
 				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+				updateBoardLayout(xPos, yPos, prevXPos, prevYPos, 2);
 			}
 			this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage(color+move));
 			
@@ -229,7 +233,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				this.add(this.boardUI[i][j]);
-		// printBoard();
+		printBoard();
 
 	}
 
@@ -344,9 +348,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					players.add(player); // Add other players to the list of players
 				}
 			}
-			this.updatePanel(); // Update the panel
-			// if(game.getPlayerListList().size()==0)	System.out.println("JUSQ GG");
-			// System.out.println(game.getPlayerListList());
+			this.updatePanel(); 
 		}
 		
 		
@@ -377,9 +379,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.add(chatPanel, BorderLayout.WEST);
 			pacmanFrame.revalidate();
 			chatPanel.startChat();
-			// System.out.println("CREATE CHAT ");
-			
-			// chatPanel.startChat();
 
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
