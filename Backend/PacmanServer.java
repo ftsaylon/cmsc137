@@ -116,8 +116,8 @@ public class PacmanServer implements Runnable, Constants{
 					Integer index = 0;
 					this.game = this.game.toBuilder().setPlayerList(playerPacket.getId()-1, playerPacket).build();
 					
-					System.out.println(this.game.getPlayerListList());
-					broadcast(this.game.toByteArray());
+					// System.out.println(this.game.getPlayerListList());
+					this.broadcast(this.game.toByteArray());
 					break;
 			}
 
