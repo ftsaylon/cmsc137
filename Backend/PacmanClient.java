@@ -293,7 +293,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	public void pacmanRespawn(){
 		this.boardUI[this.pacman.getPrevYPos()][this.pacman.getPrevXPos()] = new JLabel(IMAGELIST.getImage("empty"));
-		this.boardUI[this.board.getPacmanY()][this.board.getPacmanY()] = new JLabel(IMAGELIST.getImage("pacmans"));
+		this.boardUI[this.board.getPacmanY()][this.board.getPacmanX()] = new JLabel(IMAGELIST.getImage("pacman"));
 		this.pacman.dead();
 	}
 
@@ -322,9 +322,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		if(this.is_ghost)	
 			if(this.board.getPacmanXPos()==-1 && this.board.getPacmanYPos()==-1)
 				pacmanRespawn();
-		printBoard();
-		System.out.println(this.board.getPacmanXPos()+ " "+ this.board.getPacmanYPos());
-		System.out.println(this.pacman.getScore());
+		// printBoard();
+		// System.out.println(this.board.getPacmanXPos()+ " "+ this.board.getPacmanYPos());
+		// System.out.println(this.pacman.getNumberOfLives());
 		// Update Packets to be sent to server whenever there's movement
 		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos(), this.pacman.getScore());
 		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos(), 0);
