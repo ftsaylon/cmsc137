@@ -43,16 +43,16 @@ public class Pacman implements Constants{
 		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(LEFT))	{
+			String next = currBoard.checkNextPos(LEFT);
+			if(next.equals(DOT)){
+				this.score += 20;
+			}
+			else if (next.equals(BIGDOT)){
+				this.score += 50;
+				this.size = BIG_PACMAN;
+			}
 			this.xPos--;
 			currBoard.movePacman(LEFT);
-		}
-		String next = currBoard.checkNextPos(LEFT);
-		if(next.equals(DOT)){
-			this.score += 20;
-		}
-		else if (next.equals(BIGDOT)){
-			this.score += 50;
-			this.size = BIG_PACMAN;
 		}
 	}
 
@@ -61,16 +61,16 @@ public class Pacman implements Constants{
 		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(RIGHT))	{
+			String next = currBoard.checkNextPos(RIGHT);
+			if(next.equals(DOT)){
+				this.score += 20;
+			}
+			else if (next.equals(BIGDOT)){
+				this.score += 50;
+				this.size = BIG_PACMAN;
+			}
 			currBoard.movePacman(RIGHT);
 			this.xPos++;
-		}
-		String next = currBoard.checkNextPos(RIGHT);
-		if(next.equals(DOT)){
-			this.score += 20;
-		}
-		else if (next.equals(BIGDOT)){
-			this.score += 50;
-			this.size = BIG_PACMAN;
 		}
 	}
 	public void dead(){
@@ -83,17 +83,18 @@ public class Pacman implements Constants{
 		this.prevYPos = this.yPos;
 		Board currBoard = this.game.getGameBoard();
 		if(currBoard.checkMoveIfValid(UP))	{
+			String next = currBoard.checkNextPos(UP);
+			if(next.equals(DOT)){
+				this.score += 20;
+			}
+			else if (next.equals(BIGDOT)){
+				this.score += 50;
+				this.size = BIG_PACMAN;
+			}
 			currBoard.movePacman(UP);
 			this.yPos--;
 		}
-		String next = currBoard.checkNextPos(UP);
-		if(next.equals(DOT)){
-			this.score += 20;
-		}
-		else if (next.equals(BIGDOT)){
-			this.score += 50;
-			this.size = BIG_PACMAN;
-		}
+		
 	}
 
 	public void moveDown(){
@@ -101,17 +102,18 @@ public class Pacman implements Constants{
 		this.prevXPos = this.xPos;
 		this.prevYPos = this.yPos;
 		if(currBoard.checkMoveIfValid(DOWN))	{
+			String next = currBoard.checkNextPos(DOWN);
+			if(next.equals(DOT)){
+				this.score += 20;
+			}
+			else if (next.equals(BIGDOT)){
+				this.score += 50;
+				this.size = BIG_PACMAN;
+			}
 			currBoard.movePacman(DOWN);
 			this.yPos++;
 		}
-		String next = currBoard.checkNextPos(DOWN);
-		if(next.equals(DOT)){
-			this.score += 20;
-		}
-		else if (next.equals(BIGDOT)){
-			this.score += 50;
-			this.size = BIG_PACMAN;
-		}
+		
 	}
 
 	// Getters
