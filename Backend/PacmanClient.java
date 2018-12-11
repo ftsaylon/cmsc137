@@ -323,6 +323,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 				pacmanRespawn();
 		printBoard();
 		System.out.println(this.board.getPacmanXPos()+ " "+ this.board.getPacmanYPos());
+		System.out.println(this.pacman.getScore());
 		// Update Packets to be sent to server whenever there's movement
 		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
 		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos());
