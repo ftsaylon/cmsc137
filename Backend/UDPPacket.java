@@ -58,6 +58,8 @@ class UDPPacket implements Constants {
         }catch(Exception e){
             e.printStackTrace();
         }
+
+        System.out.print(player.getIpAddress());
         return player;
     }
     

@@ -435,7 +435,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
 			System.out.println("Connecting to server at " + args[0] + "...");
-
+			System.out.println("MY IP: " + args[4]);
 			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
