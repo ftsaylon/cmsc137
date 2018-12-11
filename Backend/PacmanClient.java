@@ -93,7 +93,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			}
 		}
-		}
+	
 		
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
