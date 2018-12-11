@@ -92,7 +92,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					break;
 
 			}
-			System.out.println(x + " "+ y);
+			// System.out.println(x + " "+ y);
 			this.ghost = new Ghost(player_name, x, y, color, this);
 			this.characterPacket = udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, x, y, x, y);
 		}
@@ -233,7 +233,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		for(int i = 0; i < BOARD_LENGTH; i++)
 			for(int j = 0; j < BOARD_WIDTH; j++)
 				this.add(this.boardUI[i][j]);
-		printBoard();
+		// printBoard();
 
 	}
 
@@ -363,7 +363,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
 			Integer id = Integer.parseInt(args[3]);
-			String ip_address = args[4];
+			String ip_address = getIpAddress();
 			// String ip_address = null;			
 			// try {
 			// 	ip_address = Inet6Address.getLocalHost().toString();
@@ -374,7 +374,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
 			System.out.println("Connecting to server at " + args[0] + "...");
-			System.out.println("MY IP: " + args[4]);
+			
 			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
@@ -398,5 +398,29 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
         }
         
 	
+	}
+
+	public static String getIpAddress() { 
+		try {
+
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();)
+			{
+				NetworkInterface e = n.nextElement();
+		
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();)
+				{
+					InetAddress addr = a.nextElement();
+					if (!addr.isLoopbackAddress()&&addr instanceof Inet4Address) {
+						String ipAddress=addr.getHostAddress().toString();
+						return ipAddress;
+					}
+				}
+			}
+
+		} catch (SocketException ex) {
+		}
+		return null; 
 	}
 }
