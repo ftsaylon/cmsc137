@@ -389,6 +389,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, port, id);
 
+			Menu menu = new Menu();
+
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
