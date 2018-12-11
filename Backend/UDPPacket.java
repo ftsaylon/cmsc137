@@ -93,17 +93,15 @@ class UDPPacket implements Constants {
         return gameState;
     }
 
-    void send(byte[] buf) {
+    void send(byte[] buf, InetAddress ip) {
         try {
             DatagramPacket datagramPacket = new DatagramPacket(
                 buf, 
                 buf.length,
-                InetAddress.getLocalHost(),
+                ip,
                 PORT
             );
-
-            System.out.println(datagramPacket.getPort());
-
+            
             socket.send(datagramPacket);
             
         } catch (SocketException e) {

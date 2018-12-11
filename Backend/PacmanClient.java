@@ -39,6 +39,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	UDPPacket udp_packet = new UDPPacket();
 	Player playerPacket;
 	Character characterPacket;
+	InetAddress serverIP;
 
 	Thread t = new Thread(this);
 
@@ -63,7 +64,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.port = 80;
 		this.players = new ArrayList<Player>(); // Holds the players
 		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
-    
+		try {
+			this.serverIP = InetAddress.getByName(server_ip);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		if(this.id == 1)	{ // ASSUMED FIRST THAT ID 1 and 2 are PACMANS
 			// this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
@@ -114,7 +120,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		try{
 			this.clientSocket = new DatagramSocket(this.clientPort);
 			this.udp_packet.setSocket(this.clientSocket); 
-			this.udp_packet.send(this.playerPacket.toByteArray()); // Send playerPacket upon initialization of client
+			this.udp_packet.send(this.playerPacket.toByteArray(), this.serverIP); // Send playerPacket upon initialization of client
 		}catch (IOException e) {
 			e.printStackTrace();
 		}catch(Exception e){
@@ -125,7 +131,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		t.start();
 
 		// Send playerPacket upon initialization of client
-		udp_packet.send(this.playerPacket.toByteArray());
+		udp_packet.send(this.playerPacket.toByteArray(), this.serverIP);
 
 	}
 
@@ -311,10 +317,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 
 		// Update Packets to be sent to server whenever there's movement
-		if(is_pacman)this.characterPacket = udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
-		else this.characterPacket = udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos());
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
-		udp_packet.send(this.playerPacket.toByteArray());	
+		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
+		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos());
+		this.playerPacket = this.udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+		this.udp_packet.send(this.playerPacket.toByteArray(), this.serverIP);	
 		this.updatePanel();
 		checkGameOver();
 		// System.out.println(this.cha)
@@ -374,7 +380,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
 			System.out.println("Connecting to server at " + args[0] + "...");
-			
+
 			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
