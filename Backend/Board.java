@@ -38,19 +38,20 @@ public class Board implements Constants{
 			this.boardLayout[y][x] = PACMAN;
 			this.boardLayout[prevY][prevX] = EMPTY;
 		}
-		else {
-			System.out.println("LOL");
-		if(isDot(x, y)) {
-			this.boardLayout[y][x] = GHOST_WITH_DOT;
-			System.out.println("LMAO");
-		}
+		else{
+			if(isDot(x, y)) {
+				this.boardLayout[y][x] = GHOST_WITH_DOT;
+
+			}
 			else this.boardLayout[y][x] = GHOST;
 			if(this.boardLayout[prevY][prevX].equals(GHOST_WITH_DOT)){
-				this.boardLayout[prevY][prevX] = DOT;
-				// BIG DOT TO BE ADDED!!
+					this.boardLayout[prevY][prevX] = DOT;
+					// BIG DOT TO BE ADDED!!
 			}	
 			else	this.boardLayout[prevY][prevX] = EMPTY;
+			
 		}
+		
 
 
 	}
@@ -76,6 +77,10 @@ public class Board implements Constants{
 		return count;
 	}
 
+	public boolean isGhostWithADot(int x, int y){
+		if(boardLayout[x][y].equals(GHOST_WITH_DOT))	return true;
+		return false;
+	}
 	public void movePacman(char move){
 		int pacmanX = getPacmanXPos();
 		int pacmanY = getPacmanYPos();
@@ -101,20 +106,45 @@ public class Board implements Constants{
 		int ghostX = ghost.getXPos();
 		int ghostY = ghost.getYPos();
 		if(move == UP){
-			boardLayout[ghostY][ghostX] = EMPTY;
-			boardLayout[ghostY-1][ghostX] = GHOST;
+			if(boardLayout[ghostY][ghostX].equals(GHOST_WITH_DOT)){
+				boardLayout[ghostY][ghostX] = DOT;
+			}
+			else 	boardLayout[ghostY][ghostX] = EMPTY;
+			if(boardLayout[ghostY-1][ghostX].equals(DOT)){
+				boardLayout[ghostY-1][ghostX] = GHOST_WITH_DOT;
+			}
+			else 	boardLayout[ghostY-1][ghostX] = GHOST;
 		}
 		else if(move == DOWN){
-			boardLayout[ghostY][ghostX] = EMPTY;
-			boardLayout[ghostY+1][ghostX] = GHOST;
+			if(boardLayout[ghostY][ghostX].equals(GHOST_WITH_DOT)){
+				boardLayout[ghostY][ghostX] = DOT;
+			}
+			else 	boardLayout[ghostY][ghostX] = EMPTY;
+			if(boardLayout[ghostY+1][ghostX].equals(DOT)){
+				boardLayout[ghostY+1][ghostX] = GHOST_WITH_DOT;
+			}
+			else 	boardLayout[ghostY+1][ghostX] = GHOST;
+
 		}
 		else if(move == LEFT){
-			boardLayout[ghostY][ghostX] = EMPTY;
-			boardLayout[ghostY][ghostX-1] = GHOST;
+			if(boardLayout[ghostY][ghostX].equals(GHOST_WITH_DOT)){
+				boardLayout[ghostY][ghostX] = DOT;
+			}
+			else 	boardLayout[ghostY][ghostX] = EMPTY;
+			if(boardLayout[ghostY][ghostX-1].equals(DOT)){
+				boardLayout[ghostY][ghostX-1] = GHOST_WITH_DOT;
+			}
+			else 	boardLayout[ghostY][ghostX-1] = GHOST;
 		}
 		else if(move == RIGHT){
-			boardLayout[ghostY][ghostX] = EMPTY;
-			boardLayout[ghostY][ghostX+1] = GHOST;
+			if(boardLayout[ghostY][ghostX].equals(GHOST_WITH_DOT)){
+				boardLayout[ghostY][ghostX] = DOT;
+			}
+			else 	boardLayout[ghostY][ghostX] = EMPTY;
+			if(boardLayout[ghostY][ghostX+1].equals(DOT)){
+				boardLayout[ghostY][ghostX+1] = GHOST_WITH_DOT;
+			}
+			else 	boardLayout[ghostY][ghostX+1] = GHOST;
 		}
 	}
 	public boolean checkMoveIfValid(char move){
