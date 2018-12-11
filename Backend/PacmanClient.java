@@ -40,7 +40,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	Player playerPacket;
 	Character characterPacket;
 	InetAddress serverIP;
-
+	String ip_address;
 	Thread t = new Thread(this);
 
 	private String server_ip;
@@ -103,8 +103,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.characterPacket = udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, x, y, x, y);
 		}
 		
-		
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+		this.ip_address = ip_address;
+		this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
 		this.players.add(this.playerPacket);
 		this.boardUI = new JLabel[BOARD_LENGTH][BOARD_WIDTH];
 		this.setLayout(new GridLayout(31, 28));
@@ -319,7 +319,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		// Update Packets to be sent to server whenever there's movement
 		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
 		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos());
-		this.playerPacket = this.udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+		this.playerPacket = this.udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
 		this.udp_packet.send(this.playerPacket.toByteArray(), this.serverIP);	
 		this.updatePanel();
 		checkGameOver();
