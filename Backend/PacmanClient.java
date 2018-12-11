@@ -369,19 +369,14 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer id = Integer.parseInt(args[2]);
 			String ip_address = getIpAddress();
-			
+
+			System.out.println("Connecting to server at " + args[0] + "...");
+
+			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, 50001, id);
+
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
-
-			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
-			pacmanFrame.add(chatPanel, BorderLayout.WEST);
-			pacmanFrame.revalidate();
-			chatPanel.startChat();
-
-			System.out.println("Connecting to server at " + args[0] + "...");
-			
-			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, PORT, id);
 
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			pacmanFrame.setPreferredSize(new Dimension(975, 700));
@@ -389,6 +384,14 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
+			
+			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
+			pacmanFrame.add(chatPanel, BorderLayout.WEST);
+			pacmanFrame.revalidate();
+			chatPanel.startChat();
+			// System.out.println("CREATE CHAT ");
+			
+			// chatPanel.startChat();
 
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
