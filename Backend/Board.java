@@ -107,7 +107,7 @@ public class Board implements Constants{
 		if(move==UP){
 			if(pacmanY!=0){
 				String nextPos = boardLayout[pacmanY-1][pacmanX];
-				System.out.println(nextPos);
+				// System.out.println(nextPos);
 				if(nextPos.equals(DOT) || nextPos.equals(EMPTY) || nextPos.equals(BIGDOT))	return true;
 			}
 		}

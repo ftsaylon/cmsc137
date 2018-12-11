@@ -122,7 +122,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		repaint();
 
 		try{
-			this.clientSocket = new DatagramSocket(this.clientPort);
+			this.clientSocket = new DatagramSocket();
 			this.udp_packet.setSocket(this.clientSocket); 
 			this.udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getByName(this.server_ip)); // Send playerPacket upon initialization of client
 		}catch (IOException e) {
@@ -424,18 +424,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
 			Integer id = Integer.parseInt(args[3]);
-			String ip_address = args[4];
-			// String ip_address = null;			
-			// try {
-			// 	ip_address = Inet6Address.getLocalHost().toString();
-			// } catch (Exception e) {
-			// 	e.printStackTrace();
-			// }
+			String ip_address = getIpAddress();
 
 			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
-			System.out.println("Connecting to server at " + args[0] + "...");
-			System.out.println("MY IP: " + args[4]);
+			System.out.println("Connecting to server at " + args[0] + " on port " + PORT + "...");
+
 			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
@@ -459,5 +453,29 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
         }
         
 	
+	}
+	
+	public static String getIpAddress() { 
+		try {
+
+			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
+			for (; n.hasMoreElements();)
+			{
+				NetworkInterface e = n.nextElement();
+		
+				Enumeration<InetAddress> a = e.getInetAddresses();
+				for (; a.hasMoreElements();)
+				{
+					InetAddress addr = a.nextElement();
+					if (!addr.isLoopbackAddress()&&addr instanceof Inet4Address) {
+						String ipAddress=addr.getHostAddress().toString();
+						return ipAddress;
+					}
+				}
+			}
+
+		} catch (SocketException ex) {
+		}
+		return null; 
 	}
 }
