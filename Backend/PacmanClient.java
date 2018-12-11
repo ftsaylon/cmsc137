@@ -125,6 +125,17 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.clientSocket = new DatagramSocket();
 			this.udp_packet.setSocket(this.clientSocket); 
 			this.udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getByName(this.server_ip)); // Send playerPacket upon initialization of client
+			
+			// if(this.id == -1){
+			// 	byte[] buf = new byte[1024];
+			// 	buf = this.udp_packet.receive();
+			// 	System.out.println(buf.toString() + "HUHU");
+			// 	this.id = Integer.parseInt(buf.toString());
+			// 	System.out.println(this.id);
+			// 	this.characterPacket = udp_packet.createCharacter(player_name, this.id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
+			// 	this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
+		
+			// }
 		}catch (IOException e) {
 			e.printStackTrace();
 		}catch(Exception e){

@@ -84,7 +84,6 @@ public class ChatPanel extends JPanel{
             packet.send(createConnection.toByteArray());
             ConnectPacket connect = ConnectPacket.parseFrom(packet.receive());
             
-            System.out.println(connect.getPlayer().getId());
             System.out.println(player_name + " has joined to the lobby.");
                 
         }
