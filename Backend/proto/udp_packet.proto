@@ -23,6 +23,7 @@ message UdpPacket{
         optional int32 yPos = 8;
         optional int32 prevXPos = 9;
         optional int32 prevYPos = 10;
+        optional int32 score = 11;
     }
 
     message Player {
@@ -37,6 +38,7 @@ message UdpPacket{
     message GameState {
         required PacketType type = 1;
         repeated Player player_list = 2;
+        optional bool winner = 3;
     }
 }
 
