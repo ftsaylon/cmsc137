@@ -226,8 +226,8 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			prevXPos = this.ghost.getPrevXPos();
 			
 			if(!(prevYPos == yPos && prevXPos == xPos)){
-				if(this.board.isGhostWithADot(prevXPos, prevYPos))	this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("smalldot"));
-				this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
+				if(this.board.isDot(prevXPos, prevYPos))	this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("smalldot"));
+				else this.boardUI[prevYPos][prevXPos] = new JLabel(IMAGELIST.getImage("empty"));
 			}
 			this.boardUI[yPos][xPos] = new JLabel(IMAGELIST.getImage(color+move));
 			
@@ -292,7 +292,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	}
 
 	public void pacmanRespawn(){
-		
+		this.boardUI[this.pacman.getPrevYPos()][this.pacman.getPrevXPos()] = new JLabel(IMAGELIST.getImage("empty"));
+		this.boardUI[this.board.getPacmanY()][this.board.getPacmanY()] = new JLabel(IMAGELIST.getImage("pacmans"));
+		this.pacman.dead();
 	}
 
 	public Board getGameBoard(){
@@ -317,8 +319,12 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			else this.ghost.moveRight();
 			move = MOVE_RIGHT;
 		}
+		if(this.is_ghost)	
+			if(this.board.getPacmanXPos()==-1 && this.board.getPacmanYPos()==-1)
+				pacmanRespawn();
 		printBoard();
 		System.out.println(this.board.getPacmanXPos()+ " "+ this.board.getPacmanYPos());
+		System.out.println(this.pacman.getScore());
 		// Update Packets to be sent to server whenever there's movement
 		if(is_pacman)this.characterPacket = this.udp_packet.createCharacter(player_name, color, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos(), this.pacman.getScore());
 		else this.characterPacket = this.udp_packet.createCharacter(player_name, color, id, ghost.getNumberOfLives(), 1, this.ghost.getXPos(), this.ghost.getYPos(), this.ghost.getPrevXPos(), this.ghost.getPrevYPos(), 0);
@@ -378,10 +384,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer id = Integer.parseInt(args[2]);
 			String ip_address = getIpAddress();
-
+			int port = Integer.parseInt(args[3]);
 			System.out.println("Connecting to server at " + args[0] + "...");
 
-			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, Integer.parseInt(args[3]), id);
+			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, port, id);
 
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
