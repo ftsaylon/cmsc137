@@ -26,7 +26,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private String move;
 	private Map map;
 	private HashMap<Ghost, String> ghosts;
-	// private ChatPanel chatPanel;
+	private ChatPanel chatPanel;
 	// private JPanel boardPanel;
 	static final int NOT_OVER = 0;
 	// private static int numberOfPlayers = 0;
@@ -59,8 +59,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.gameOver = false;
 		this.is_connected = false;
 		this.move = "";
-		// PacmanClient.numberOfPlayers ++;
-
 		this.clientPort = clientPort; // Port of this client
 		this.id = id;
 		this.port = 80;
@@ -93,6 +91,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			}
 		}
+		
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
 		// if(this.id == 1) setChatServer();
@@ -423,21 +422,18 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			pacmanFrame.setPreferredSize(new Dimension(775, 700));
+			pacmanFrame.setPreferredSize(new Dimension(975, 700));
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
-
-			System.out.println("CREATE CHAT ");
 			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
-			chatFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			chatFrame.setPreferredSize(new Dimension(200, 700));
-			chatFrame.setResizable(false);
-			chatFrame.add(chatPanel);
-			chatFrame.pack();
-			chatFrame.setVisible(true);
+			pacmanFrame.add(chatPanel, BorderLayout.WEST);
+			pacmanFrame.revalidate();
 			chatPanel.startChat();
+			// System.out.println("CREATE CHAT ");
+			
+			// chatPanel.startChat();
 
 		}catch(ArrayIndexOutOfBoundsException e){
             System.out.println("Usage: java PacmanClient <server ip> <name> <port no.>");
