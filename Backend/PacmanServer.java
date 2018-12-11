@@ -74,8 +74,9 @@ public class PacmanServer implements Runnable, Constants{
 		Player playerPacketOld = null;
 		Player playerPacket = null;
 		byte[] buf = null;
-
-		while(true){
+		Boolean connected = true;
+		
+		while(connected){
 			// Receive Player Packet from Client
 			buf = this.udp_packet.receive();
 			playerPacket = this.udp_packet.parseToPlayer(buf);
@@ -119,6 +120,10 @@ public class PacmanServer implements Runnable, Constants{
 					// System.out.println(this.game.getPlayerListList());
 					this.broadcast(this.game.toByteArray());
 					break;
+				case GAME_END:
+					this.broadcast(this.game.toByteArray());	
+					connected = false;
+					break;
 			}
 
 		}
@@ -128,7 +133,14 @@ public class PacmanServer implements Runnable, Constants{
 		Iterator iter = this.game.getPlayerListList().iterator();
 		while(iter.hasNext()){
 			Player player = (Player) iter.next();
-			System.out.println(player.getCharacter().getName() + player.getIpAddress());
+			System.out.println("Pac-Man Score: " + player.getCharacter().getScore());
+			if(player.getCharacter().getId() == 1){ // Find Pac-Man
+				if(player.getCharacter().getScore() == HIGHEST_POSSIBLE_SCORE || player.getCharacter().getLives() == 0){
+					this.gameStage = GAME_END;
+					this.game = this.game.toBuilder().setWinner(true).build();
+				}
+			}
+			// System.out.println(player.getCharacter().getName() + player.getIpAddress());
 			this.udp_packet.sendToClient(player, buf);
 		}
 	}
