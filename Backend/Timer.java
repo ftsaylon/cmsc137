@@ -1,3 +1,5 @@
+package pacman.game;
+
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +19,7 @@ public class Timer extends JPanel{
         timeLeft.setText(time);
 
         timerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        timerFrame.setPreferredSize(new Dimension(50, 50));
+        timerFrame.setPreferredSize(new Dimension(80, 80));
         timerFrame.add(timeLeft);
         timerFrame.setResizable(false);
         timerFrame.pack();
@@ -33,6 +35,10 @@ public class Timer extends JPanel{
             Thread.sleep(1000);
             timet = timet - 1;
             delay = delay - 1000;
+
+            if (timet == 0){
+            	timeLeft.setText("Game Over");
+            }
 
         }
         while (delay != 0);
