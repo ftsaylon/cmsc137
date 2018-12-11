@@ -53,7 +53,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 	// private static final String lobbyId = "CHAT";
 	public PacmanClient(String server_ip, String ip_address, String player_name, Integer clientPort, Integer id){
-
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.map = new Map(3);
@@ -73,8 +72,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
 			this.is_pacman = true;
 			this.is_ghost = false;
-    }
-    else{
+
+		}
+		// else ghost
+		else{
 			this.is_ghost = true;
 			this.is_pacman = false;
 			switch(this.id){
@@ -93,7 +94,6 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 			}
 		}
-	
 		
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
 		this.playerPacket = udp_packet.createPlayer(player_name, this.ip_address, this.characterPacket, this.clientPort);
@@ -235,18 +235,9 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 					case OUT:
 						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("empty"));
 						break;
-					// case BLINKY:
-					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-					// 	break;
-					// case SPEEDY:
-					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-					// 	break;
-					// case INKY:
-					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-					// 	break;
-					// case CLYDE:
-					// 	this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
-					// 	break;
+					case GHOST:
+						this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("ghost"));
+						break;
 					case PACMAN:
 						if(move=="")this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pacRIGHT"));
 						else this.boardUI[i][j] = new JLabel(IMAGELIST.getImage("pac"+move));
