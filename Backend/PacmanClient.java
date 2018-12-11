@@ -367,30 +367,24 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		try{
 			String serverName = args[0];
 			String playerName = args[1];
-			Integer clientPort = Integer.parseInt(args[2]);
-			Integer id = Integer.parseInt(args[3]);
+			Integer id = Integer.parseInt(args[2]);
 			String ip_address = getIpAddress();
-			// String ip_address = null;			
-			// try {
-			// 	ip_address = Inet6Address.getLocalHost().toString();
-			// } catch (Exception e) {
-			// 	e.printStackTrace();
-			// }
-
-			// System.out.println(args[0] + args[1] + args[2] + args[3]);
 
 			System.out.println("Connecting to server at " + args[0] + "...");
 
-			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
+			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, 50001, id);
+
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
+
 			pacmanFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			pacmanFrame.setPreferredSize(new Dimension(975, 700));
 			pacmanFrame.setResizable(false);
 			pacmanFrame.add(client);
 			pacmanFrame.pack();
 			pacmanFrame.setVisible(true);
+			
 			ChatPanel chatPanel = new ChatPanel(playerName, "202.92.144.45", 80, is_pacman);
 			pacmanFrame.add(chatPanel, BorderLayout.WEST);
 			pacmanFrame.revalidate();
