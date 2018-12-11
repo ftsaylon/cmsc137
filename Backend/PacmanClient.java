@@ -49,8 +49,10 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 	private boolean is_ghost;
 	private String color;
 	private String lobbyId;
+	private String ip_address;
+
 	// private static final String lobbyId = "CHAT";
-	public PacmanClient(String server_ip, String player_name, Integer clientPort, Integer id){
+	public PacmanClient(String server_ip, String ip_address, String player_name, Integer clientPort, Integer id){
 		this.server_ip = server_ip;
 		this.player_name = player_name;
 		this.map = new Map(3);
@@ -62,6 +64,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		this.clientPort = clientPort; // Port of this client
 		this.id = id;
 		this.port = 80;
+		this.ip_address = ip_address;
 		this.players = new ArrayList<Player>(); // Holds the players
 		this.pacman = new Pacman(this.board.getPacmanXPos(), this.board.getPacmanYPos(), this);
     
@@ -93,7 +96,7 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		}
 		
 		this.characterPacket = udp_packet.createCharacter(player_name, id, pacman.getNumberOfLives(), pacman.getSize(), pacman.getXPos(), pacman.getYPos(), this.pacman.getXPos(), this.pacman.getYPos());
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
+		this.playerPacket = udp_packet.createPlayer(player_name, this.server_ip, this.characterPacket, this.clientPort);
 		// if(this.id == 1) setChatServer();
 		// else {
 
@@ -121,18 +124,18 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 		try{
 			this.clientSocket = new DatagramSocket(this.clientPort);
 			this.udp_packet.setSocket(this.clientSocket); 
-			this.udp_packet.send(this.playerPacket.toByteArray()); // Send playerPacket upon initialization of client
+			this.udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getByName(this.server_ip)); // Send playerPacket upon initialization of client
 		}catch (IOException e) {
 			e.printStackTrace();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 
+		// Send playerPacket upon initialization of client
+		// udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getLocalHost());
 		// Start Client thread
 		t.start();
 
-		// Send playerPacket upon initialization of client
-		udp_packet.send(this.playerPacket.toByteArray());
 
 	}
 
@@ -285,8 +288,14 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 
 		// Update Packets to be sent to server whenever there's movement
 		this.characterPacket = udp_packet.createCharacter(player_name, this.characterPacket.getId(), this.pacman.getNumberOfLives(), this.pacman.getSize(), this.pacman.getXPos(), this.pacman.getYPos(), this.pacman.getPrevXPos(), this.pacman.getPrevYPos());
-		this.playerPacket = udp_packet.createPlayer(player_name, this.characterPacket, this.clientPort);
-		udp_packet.send(this.playerPacket.toByteArray());	
+		this.playerPacket = udp_packet.createPlayer(player_name, this.server_ip, this.characterPacket, this.clientPort);
+		
+		try {
+			udp_packet.send(this.playerPacket.toByteArray(), InetAddress.getByName(this.server_ip));	
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		this.updatePanel();
 		checkGameOver();
 	}
@@ -415,9 +424,18 @@ public class PacmanClient extends JPanel implements Runnable, KeyListener, Const
 			String playerName = args[1];
 			Integer clientPort = Integer.parseInt(args[2]);
 			Integer id = Integer.parseInt(args[3]);
+			String ip_address = null;			
+			try {
+				ip_address = InetAddress.getLocalHost().toString();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-			System.out.println(args[0] + args[1] + args[2] + args[3]);
-			PacmanClient client = new PacmanClient(serverName, playerName, clientPort, id);
+			// System.out.println(args[0] + args[1] + args[2] + args[3]);
+
+			System.out.println("Connecting to server at " + args[0] + "...");
+
+			PacmanClient client = new PacmanClient(serverName, ip_address, playerName, clientPort, id);
 			boolean is_pacman;
 			if(id == 1) is_pacman = true;
 			else is_pacman = false;	
