@@ -31,6 +31,7 @@ message UdpPacket{
         optional Character character = 4;
         optional string ip_address = 5;
         optional int32 port = 6;
+        optional int32 score = 7;
     }
 
     message GameState {

@@ -58,8 +58,6 @@ class UDPPacket implements Constants {
         }catch(Exception e){
             e.printStackTrace();
         }
-
-        System.out.print(player.getIpAddress());
         return player;
     }
     
@@ -109,9 +107,7 @@ class UDPPacket implements Constants {
                 ip,
                 PORT
             );
-
-            System.out.println(datagramPacket.getPort());
-
+            
             socket.send(datagramPacket);
             
         } catch (SocketException e) {
