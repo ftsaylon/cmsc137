@@ -11,22 +11,19 @@ import java.awt.event.*;
 
 public class ChatSender implements Runnable {
     private Packet packet;
-    // private Player player;;
     private User user;
     private String lobbyId;
     private Boolean connected;
     private String message;
-    private JButton sendButton;
     private JTextField chatBox;
     private JTextArea chatArea;
-    public ChatSender(Packet packet, User user, String lobbyId, JButton sendButton, JTextField chatBox, JTextArea chatArea) {
+    public ChatSender(Packet packet, User user, String lobbyId, JTextField chatBox, JTextArea chatArea) {
         this.packet = packet;
         // this.player = player;
         this.user =user;
         this.lobbyId = lobbyId;
         this.connected = true;
         this.chatBox = chatBox;
-        this.sendButton = sendButton;
         this.message = "";
         this.chatBox = chatBox;
         this.chatArea = chatArea;
@@ -41,7 +38,7 @@ public class ChatSender implements Runnable {
         
      
     public void send(){
-        this.sendButton.addActionListener(new ActionListener(){
+        this.chatBox.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 String message = chatBox.getText();
 

@@ -146,7 +146,7 @@ public class Board implements Constants{
 				nextPos = boardLayout[yPos][xPos+1];
 				break;
 			case LEFT:
-				nextPos = boardLayout[yPos+1][xPos];
+				nextPos = boardLayout[yPos][xPos-1];
 				break;	
 		}
 		return nextPos;
@@ -175,12 +175,32 @@ public class Board implements Constants{
 		}
 		else if (move==RIGHT){
 			if(ghostX!=BOARD_WIDTH){
-				String nextPos = boardLayout[ghostY+1][ghostX+1];
+				String nextPos = boardLayout[ghostY][ghostX+1];
 				if(!nextPos.equals(WALL) && !nextPos.equals(OUT))	return true;
 			}
 		}
 		return false;
 	}
 
+	public int getInitialGhostXPos(int id){
+		int numGhosts = 1;
+		for(int i = 0; i < BOARD_LENGTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				if(boardLayout[i][j].equals(GHOST) || boardLayout[i][j].equals(GHOST_WITH_DOT))	numGhosts++;
+				if(id == numGhosts)	return j;
+			}
+		}
+		return -1;
+	}
+	public int getInitialGhostYPos(int id){
+		int numGhosts = 1;
+		for(int i = 0; i < BOARD_LENGTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				if(boardLayout[i][j].equals(GHOST) || boardLayout[i][j].equals(GHOST_WITH_DOT))	numGhosts++;
+				if(id == numGhosts)	return i;
+			}
+		}
+		return -1;
+	}
 
 }

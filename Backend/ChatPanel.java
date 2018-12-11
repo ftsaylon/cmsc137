@@ -21,7 +21,6 @@ public class ChatPanel extends JPanel{
 	private int port;
     private JTextArea chatArea; 
     private JTextField chatBox;
-    private JButton sendButton;
     private JLabel senderName;
     private ChatReceiver chatReceiver;
     private ChatSender chatSender;
@@ -41,10 +40,8 @@ public class ChatPanel extends JPanel{
         this.chatArea = new JTextArea(200,300);
         this.chatArea.setEditable(false);
         this.chatArea.setLineWrap(true);
-        this.sendButton = new JButton("Send");
         this.chatBox = new JTextField();
         this.chatBox.setPreferredSize(new Dimension(200, 100));
-        // this.sendButton.addActionListener(new sendButtonListener());
         this.senderName = new JLabel();
         this.add(senderName);
         this.senderName.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -52,9 +49,6 @@ public class ChatPanel extends JPanel{
         this.chatArea.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.add(chatBox);
         this.chatBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.add(sendButton);
-        this.sendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
         this.player_name = player_name;
 
 		 try {
@@ -103,7 +97,7 @@ public class ChatPanel extends JPanel{
         try{
             this.startChat = true;
     
-            this.chatSender = new ChatSender(this.packet, this.user, this.lobbyId, this.sendButton, this.chatBox, this.chatArea);
+            this.chatSender = new ChatSender(this.packet, this.user, this.lobbyId, this.chatBox, this.chatArea);
             this.chatReceiver = new ChatReceiver(this.packet, this.user, this.lobbyId, this.chatArea);
             Thread sender = new Thread(this.chatSender);
             Thread receiver = new Thread(this.chatReceiver);

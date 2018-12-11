@@ -15,13 +15,14 @@ message UdpPacket{
     message Character{
         required PacketType type = 1;
         required string name = 2;
-        optional int32 id = 3;
-        optional int32 lives = 4;
-        optional int32 size = 5;
-        optional int32 xPos = 6;
-        optional int32 yPos = 7;
-        optional int32 prevXPos = 8;
-        optional int32 prevYPos = 9;
+        required string color = 3;
+        optional int32 id = 4;
+        optional int32 lives = 5;
+        optional int32 size = 6;
+        optional int32 xPos = 7;
+        optional int32 yPos = 8;
+        optional int32 prevXPos = 9;
+        optional int32 prevYPos = 10;
     }
 
     message Player {

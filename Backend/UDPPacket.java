@@ -24,11 +24,12 @@ class UDPPacket implements Constants {
         this.socket = socket;
     }
 
-    Character createCharacter(String characterName, Integer Id, Integer lives, Integer size, Integer xPos, Integer yPos, Integer prevXPos, Integer prevYPos){
+    Character createCharacter(String characterName, String color, Integer Id, Integer lives, Integer size, Integer xPos, Integer yPos, Integer prevXPos, Integer prevYPos){
         Character character = 
             Character.newBuilder()
                 .setType(PacketType.CHARACTER)
                 .setName(characterName)
+                .setColor(color)
                 .setId(Id)
                 .setLives(lives)
                 .setSize(size)
